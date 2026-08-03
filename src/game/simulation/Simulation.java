@@ -47,6 +47,7 @@ public class Simulation {
     public void startSimulation() {
         running = true;
         while (running) {
+            System.out.println("TURN " + turnCount);
             MapRenderer.printMap(map);
             nextTurn();
             turnCount++;

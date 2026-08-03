@@ -70,6 +70,10 @@ public class Herbivore extends Creature {
     }
 
     private boolean canMoveTo(Coordinates cord, Map<Coordinates, Entity> worldView) {
+        if (cord.getX() <= 0 || cord.getY() <= 0 ||
+                cord.getX() > 5 || cord.getY() > 5) {
+            return false;
+        }
         Entity entity = worldView.get(cord);
         return entity == null || entity instanceof Grass || entity == this;
     }
@@ -85,9 +89,10 @@ public class Herbivore extends Creature {
 
         while (true) {
             int rndm = random.nextInt(4);
-            if (canMoveTo(coordinates, worldView)) {
-                coordinates = directions.get(rndm);
-                System.out.println("moved to: " + coordinates);
+            Coordinates target = directions.get(rndm);
+            if (canMoveTo(target, worldView)) {
+                coordinates = target;
+                System.out.println("Herbivore: moved to: " + coordinates);
                 return;
             } else {
                 mistakes++;
