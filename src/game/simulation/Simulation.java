@@ -3,6 +3,8 @@ package game.simulation;
 import game.ForestMap;
 import game.MapRenderer;
 import game.simulation.creatures.Creature;
+import game.simulation.creatures.Herbivore;
+import game.simulation.fieldObjects.Grass;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +13,8 @@ import java.util.Map;
 public class Simulation {
     private final ForestMap forestMap;
     private final Map<Coordinates, Entity> map;
+    private final List<Action> initActions;
+    private final List<Action> turnActions;
     private boolean running = false;
     private int turnCount;
 
@@ -18,36 +22,25 @@ public class Simulation {
         this.forestMap = new ForestMap();
         this.map = forestMap.getMap();
         this.turnCount = 0;
+        this.initActions = InitActionsFactory.createActions();
+        this.turnActions = TurnActionsFactory.createActions();
         startSimulation();
     }
 
     public void nextTurn() {
-        List<Creature> creatures = new ArrayList<>();
-        for (Entity entity : map.values()) {
-            if (entity instanceof Creature creature) {
-                creatures.add(creature);
-            }
-        }
-
-        for (Creature creature : creatures) {
-            Coordinates currentCoords = forestMap.getCurrentCoords(creature);
-            if (currentCoords == null) {
-                continue;
-            }
-            creature.makeMove(forestMap);
-            Coordinates newCoords = forestMap.getCurrentCoords(creature);
-            if (!currentCoords.equals(newCoords)) {
-                forestMap.moveCreatureTo(creature, newCoords);
-            }
+        for (Action turnAction : turnActions) {
+            turnAction.execute(forestMap);
         }
     }
 
     public void startSimulation() {
+        for (Action initAction : initActions) {
+            initAction.execute(forestMap);
+        }
         MapRenderer.printMap(map);
         running = true;
         while (running) {
             nextTurn();
-            System.out.println("TURN " + turnCount);
             MapRenderer.printMap(map);
             turnCount++;
             try {
