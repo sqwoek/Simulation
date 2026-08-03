@@ -32,7 +32,7 @@ public class Simulation {
         for (Creature creature : creatures) {
             Coordinates currentCoords = forestMap.getCurrentCoords(creature);
             if (currentCoords == null) {
-                return;
+                continue;
             }
             creature.makeMove(forestMap);
             Coordinates newCoords = forestMap.getCurrentCoords(creature);

@@ -11,10 +11,10 @@ import java.util.Map;
 
 public class MapRenderer {
     public static void printMap(Map<Coordinates, Entity> map) {
-        System.out.println("--------------------");
-        for (int x = 1; x <= 5; x++) {
-            System.out.print("| ");
-            for (int y = 1; y <= 5; y++) {
+        System.out.println();
+        System.out.println("====================");
+        for (int y = 1; y <= 10; y++) {
+            for (int x = 1; x <= 10; x++) {
                 Coordinates coordinates = new Coordinates(x, y);
                 Entity entity = map.get(coordinates);
                 if (entity instanceof FieldObject fieldObject) {
@@ -30,10 +30,12 @@ public class MapRenderer {
                         System.out.print("⬛");
                     }
                 }
-                if (x <= 4) System.out.print(" ");
+                if (x <= 9) {
+                    System.out.print(" ");
+                }
             }
-            System.out.println(" |");
+            System.out.println();
         }
-        System.out.println("--------------------");
+        System.out.println();
     }
 }

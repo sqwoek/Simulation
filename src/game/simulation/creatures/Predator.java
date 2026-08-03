@@ -28,6 +28,7 @@ public class Predator extends Creature {
             System.out.println("Predator attacked rabbit at: " + targetCoords);
             if (herbivore.getHealth() <= 0) {
                 forestMap.removeEntity(targetCoords);
+                forestMap.moveCreatureTo(this, targetCoords);
                 System.out.println("Rabbit dead at: " + targetCoords);
             }
         }

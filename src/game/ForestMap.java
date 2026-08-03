@@ -10,26 +10,31 @@ import game.simulation.fieldObjects.Grass;
 import game.simulation.fieldObjects.Rock;
 import game.simulation.fieldObjects.Tree;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class ForestMap {
     private final Map<Coordinates, Entity> map = new HashMap<>();
     private final Random random = new Random();
-    private static final int MAP_SIZE = 5;
+    private static final int MAP_SIZE = 10;
 
     public ForestMap() {
-        initializeMap(
-                new Herbivore(1, 100),
-                new Predator(2, 100, 20)
-        );
+        List<Creature> creatures = new ArrayList<>();
+        creatures.add(new Herbivore(1, 100));
+        creatures.add(new Herbivore(1, 100));
+        creatures.add(new Herbivore(1, 100));
+        creatures.add(new Herbivore(1, 100));
+        creatures.add(new Predator(2, 100, 35));
+        creatures.add(new Predator(2, 100, 35));
+        initializeMap(creatures);
     }
 
-    public void initializeMap(Creature predator, Creature herbivore) {
+    public void initializeMap(List<Creature> creatures) {
         putFieldObjects(map);
-        putCreatures(new Coordinates(1, 4), predator);
-        putCreatures(new Coordinates(3, 2), herbivore);
+        for (int i = 0; i < creatures.size(); i++) {
+            int x = random.nextInt(1, MAP_SIZE);
+            int y = random.nextInt(1, MAP_SIZE);
+            putCreatures(new Coordinates(x, y), creatures.get(i));
+        }
     }
 
     public void putFieldObjects(Map<Coordinates, Entity> map) {
@@ -65,32 +70,6 @@ public class ForestMap {
 
     public Entity getEntity(Coordinates coordinates) {
         return map.get(coordinates);
-    }
-
-    public Map<Coordinates, Entity> getObjectsAround(Coordinates coordinates, int radius) {
-        // !!!!!!!!!!!!!!!!!!!
-        radius = 1; // temporary variable
-
-        java.util.Map<Coordinates, Entity> around = new HashMap<>();
-
-        if (isEmpty(coordinates)) {
-            return null;
-        }
-
-        Coordinates cordBorderMax = coordinates.shift(radius);
-        Coordinates cordBorderMin = coordinates.shift(-radius);
-
-        for (int i = cordBorderMin.getX(); i <= cordBorderMax.getX(); i++) {
-            for (int j = cordBorderMin.getY(); j <= cordBorderMax.getY(); j++) {
-                Coordinates coords = new Coordinates(i, j);
-
-                Entity entity = map.get(coords);
-                if (entity != null) {
-                    around.put(coords, entity);
-                }
-            }
-        }
-        return around;
     }
 
     public Coordinates getCurrentCoords(Entity target) {
