@@ -6,8 +6,8 @@ public class Coordinates {
     private int x;
     private int y;
 
-    public Coordinates(int key, int y) {
-        this.x = key;
+    public Coordinates(int x, int y) {
+        this.x = x;
         this.y = y;
     }
 
@@ -25,6 +25,14 @@ public class Coordinates {
 
     public void setY(int y) {
         this.y = y;
+    }
+
+    public Coordinates shift(int shift) {
+        return new Coordinates(this.x + shift, this.y + shift);
+    }
+
+    public Coordinates shift(int x, int y) {
+        return new Coordinates(this.x + x, this.y + y);
     }
 
     @Override

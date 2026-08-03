@@ -19,12 +19,16 @@ public class MapFabric {
     private final Random random = new Random();
 
     public MapFabric() {
-        initializeMap(new Predator(2, 20), new Herbivore(1));
+        initializeMap(
+                new Predator(2, 20, new Coordinates(4, 1)),
+                new Herbivore(1, new Coordinates(3, 4))
+        );
     }
 
     public void initializeMap(Creature predator, Creature herbivore) {
         putFieldObjects(map);
-        putCreatures(predator, herbivore);
+        putCreatures(predator);
+        putCreatures(herbivore);
     }
 
     public void putFieldObjects(Map<Coordinates, Entity> map) {
@@ -43,12 +47,48 @@ public class MapFabric {
         }
     }
 
-    public void putCreatures(Creature predator, Creature herbivore) {
-        map.put(new Coordinates(1, 4), predator);
-        map.put(new Coordinates(4, 2), herbivore);
+    public void putCreatures(Creature creature) {
+        map.put(creature.getCoordinates(), creature);
     }
 
     public Map<Coordinates, Entity> getMap() {
         return map;
+    }
+
+    public boolean isEmpty(Coordinates coordinates) {
+        if (map.containsKey(coordinates)) {
+            return false;
+        }
+        return true;
+    }
+
+    public Entity getEntity(Coordinates coordinates) {
+        return map.get(coordinates);
+    }
+
+    public Map<Coordinates, Entity> getObjectsAround(Coordinates coordinates, int radius) {
+        // !!!!!!!!!!!!!!!!!!!
+        radius = 1; // temporary variable
+
+        Map<Coordinates, Entity> around = new HashMap<>();
+
+        if (isEmpty(coordinates)) {
+            return null;
+        }
+
+        Coordinates cordBorderMax = coordinates.shift(radius);
+        Coordinates cordBorderMin = coordinates.shift(-radius);
+
+        for (int i = cordBorderMin.getX(); i <= cordBorderMax.getX(); i++) {
+            for (int j = cordBorderMin.getY(); j <= cordBorderMax.getY(); j++) {
+                Coordinates coords = new Coordinates(i, j);
+
+                Entity entity = map.get(coords);
+                if (entity != null) {
+                    around.put(coords, entity);
+                }
+            }
+        }
+        return around;
     }
 }
