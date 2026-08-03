@@ -1,6 +1,6 @@
 package game.simulation;
 
-import game.MapFabric;
+import game.ForestMap;
 import game.MapRenderer;
 import game.simulation.creatures.Creature;
 
@@ -9,14 +9,14 @@ import java.util.List;
 import java.util.Map;
 
 public class Simulation {
-    private final MapFabric fabric;
+    private final ForestMap forestMap;
     private final Map<Coordinates, Entity> map;
     private boolean running = false;
     private int turnCount;
 
     public Simulation() {
-        this.fabric = new MapFabric();
-        this.map = fabric.getMap();
+        this.forestMap = new ForestMap();
+        this.map = forestMap.getMap();
         this.turnCount = 0;
         startSimulation();
     }
@@ -30,18 +30,16 @@ public class Simulation {
         }
 
         for (Creature creature : creatures) {
-            Coordinates coords = creature.getCoordinates();
-            Map<Coordinates, Entity> worldView = fabric.getObjectsAround(coords, creature.getSpeed());
-            creature.makeMove(worldView);
-
-            if (!coords.equals(creature.getCoordinates())) {
-                map.remove(coords);
-                map.put(creature.getCoordinates(), creature);
+            Coordinates currentCoords = forestMap.getCurrentCoords(creature);
+            if (currentCoords == null) {
+                return;
+            }
+            creature.makeMove(forestMap);
+            Coordinates newCoords = forestMap.getCurrentCoords(creature);
+            if (!currentCoords.equals(newCoords)) {
+                forestMap.moveCreatureTo(creature, newCoords);
             }
         }
-        // remove dead animals
-
-        // update world if needed
     }
 
     public void startSimulation() {
