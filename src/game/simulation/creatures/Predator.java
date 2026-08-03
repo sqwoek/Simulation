@@ -1,5 +1,6 @@
 package game.simulation.creatures;
 
+import game.ForestMap;
 import game.simulation.Coordinates;
 import game.simulation.Entity;
 
@@ -17,6 +18,19 @@ public class Predator extends Creature {
         this.speed = speed;
         this.health = health;
         this.attack = attack;
+    }
+
+    @Override
+    void devourTarget(Coordinates targetCoords, ForestMap forestMap) {
+        Entity entity = forestMap.getEntity(targetCoords);
+        if (entity instanceof Herbivore herbivore) {
+            herbivore.takeDamage(attack);
+            System.out.println("Predator attacked rabbit at: " + targetCoords);
+            if (herbivore.getHealth() <= 0) {
+                forestMap.removeEntity(targetCoords);
+                System.out.println("Rabbit dead at: " + targetCoords);
+            }
+        }
     }
 
     @Override

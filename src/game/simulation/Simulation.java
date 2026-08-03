@@ -43,11 +43,12 @@ public class Simulation {
     }
 
     public void startSimulation() {
+        MapRenderer.printMap(map);
         running = true;
         while (running) {
+            nextTurn();
             System.out.println("TURN " + turnCount);
             MapRenderer.printMap(map);
-            nextTurn();
             turnCount++;
             try {
                 Thread.sleep(3000);

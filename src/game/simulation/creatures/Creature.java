@@ -20,19 +20,22 @@ public abstract class Creature extends Entity {
     }
 
     public void makeMove(ForestMap forestMap) {
-        Coordinates currentCoords = forestMap.getCurrentCoords(this);
-        if (currentCoords == null) {
-            return;
-        }
-        Coordinates targetCoords = forestMap.getNearestTargetCords(this, target);
-        if (targetCoords == null) {
-            wanderAround(currentCoords, forestMap);
-            return;
-        }
-        if (forestMap.isTargetClose(this, targetCoords)) {
-            devourTarget(targetCoords, forestMap);
-        } else {
-            moveToTarget(targetCoords, forestMap);
+        for (int i = 0; i < speed; i++) {
+            Coordinates currentCoords = forestMap.getCurrentCoords(this);
+            if (currentCoords == null) {
+                return;
+            }
+            Coordinates targetCoords = forestMap.getNearestTargetCords(this, target);
+            if (targetCoords == null) {
+                wanderAround(currentCoords, forestMap);
+                continue;
+            }
+
+            if (forestMap.isTargetClose(this, targetCoords)) {
+                devourTarget(targetCoords, forestMap);
+            } else {
+                moveToTarget(targetCoords, forestMap);
+            }
         }
     }
 
@@ -61,13 +64,7 @@ public abstract class Creature extends Entity {
         }
     }
 
-    private void devourTarget(Coordinates targetCoords, ForestMap forestMap) {
-        Entity entity = forestMap.getEntity(targetCoords);
-        if (target.isInstance(entity)) {
-            forestMap.removeEntity(targetCoords);
-            System.out.println("Someone/something was eaten.");
-        }
-    }
+    abstract void devourTarget(Coordinates targetCoords, ForestMap forestMap);
 
     private void wanderAround(Coordinates coordinates, ForestMap forestMap) {
         List<Coordinates> directions = List.of(
@@ -87,7 +84,7 @@ public abstract class Creature extends Entity {
                 return;
             } else {
                 mistakes++;
-                if (mistakes == 20) {
+                if (mistakes == 100) {
                     throw new ArithmeticException("Need to solve that later...");
                 }
             }
