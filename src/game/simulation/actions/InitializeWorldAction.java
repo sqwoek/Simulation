@@ -32,13 +32,13 @@ public class InitializeWorldAction implements WorldAction {
             for (int j = 1; j <= MAP_SIZE; j++) {
                 Coordinates coordinates = new Coordinates(i, j);
                 int rndm = random.nextInt(MAP_SIZE);
-                FieldObject fieldObject = switch (rndm) {
-                    case 0 -> new Rock();
-                    case 1 -> new Tree();
-                    case 2 -> new Grass();
-                    default -> null;
-                };
-                forestMap.placeEntity(coordinates, fieldObject);
+                if (rndm == 0) {
+                    forestMap.placeEntity(coordinates, new Rock());
+                } else if (rndm == 1) {
+                    forestMap.placeEntity(coordinates, new Tree());
+                } else if (rndm == 2) {
+                    forestMap.placeEntity(coordinates, new Grass());
+                }
             }
         }
 

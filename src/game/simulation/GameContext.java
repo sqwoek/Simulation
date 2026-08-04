@@ -30,7 +30,10 @@ public class GameContext {
     }
 
     public boolean canMove(Creature creature, Coordinates target) {
-        if (map.isCellEmpty(target)) {
+        if (!map.isWithinBorders(target)) {
+            return false;
+        }
+        if (map.isEmpty(target)) {
             return true;
         }
         Entity entity = map.getEntity(target);
@@ -62,12 +65,10 @@ public class GameContext {
             throw new RuntimeException("Couldn't find target for entity: " + creature.getClass());
         }
 
-        Map<Coordinates, Entity> allEntities = map.getAllEntities();
-
         Coordinates nearest = null;
         int minDistance = Integer.MAX_VALUE;
 
-        for (Map.Entry<Coordinates, Entity> entry : allEntities.entrySet()) {
+        for (Map.Entry<Coordinates, Entity> entry : map.getMap().entrySet()) {
             if (targetType.isInstance(entry.getValue())) {
                 int distance = Math.abs(coords.getX() - entry.getKey().getX()) +
                         Math.abs(coords.getY() - entry.getKey().getY());
@@ -81,6 +82,7 @@ public class GameContext {
     }
 
     public Coordinates randomMove(Creature creature) {
+        System.out.println(creature + " want to random move");
         Coordinates pos = getCoordinates(creature);
         List<Coordinates> directions = List.of(
                 pos.shift(1, 0),
@@ -88,11 +90,14 @@ public class GameContext {
                 pos.shift(0, 1),
                 pos.shift(0, -1)
         );
-        for (int i = 0; i < directions.size(); i++) {
+        //TODO: get rid of randomizer
+        for (int i = 0; i < 100; i++) {
             int idx = rndm.nextInt(directions.size());
             Coordinates next = directions.get(idx);
             if (canMove(creature, next)) {
-                return next;
+                map.moveEntityTo(creature, next);
+                System.out.println(creature + " random move to " + next);
+                return;
             }
         }
         return pos;
@@ -104,6 +109,24 @@ public class GameContext {
     }
 
     public void move(Creature creature, Coordinates coordinates) {
-        map.moveEntityTo(creature, coordinates);
+        if (canMove(creature, coordinates)) {
+            map.moveEntityTo(creature, coordinates);
+        } else  {
+            randomMove(creature);
+        }
+    }
+
+    public void devourEntity(Creature creature, Coordinates targetCoords) {
+        Entity edible = map.getEntity(targetCoords);
+        if (creature instanceof Predator && edible instanceof Herbivore) {
+            ((Herbivore) edible).takeDamage(((Predator) creature).getAttack());
+            if (((Herbivore) edible).getHealth() <= 0) {
+                map.removeEntity(targetCoords);
+                map.moveEntityTo(creature, targetCoords);
+            }
+        }
+        if (creature instanceof Herbivore && edible instanceof Grass) {
+            map.removeEntity(targetCoords);
+        }
     }
 }

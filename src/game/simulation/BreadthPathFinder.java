@@ -32,10 +32,11 @@ public class BreadthPathFinder {
                 if (!map.isWithinBorders(next)) {
                     continue;
                 }
-                if (!map.isCellEmpty(next)) {
-                    continue;
-                }
-                if (!next.equals(to)) {
+
+                boolean isTarget = next.equals(to);
+                boolean isFree = map.isEmpty(next);
+
+                if (!isFree && !isTarget) {
                     continue;
                 }
                 if (visited.contains(next)) {

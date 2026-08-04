@@ -12,14 +12,10 @@ import java.util.Random;
 public abstract class Creature extends Entity {
     private int speed;
     private int health;
-    private final Class<? extends Entity> target;
-    private final Random random = new Random();
-    private final BreadthPathFinder pathFinder = new BreadthPathFinder();
 
-    public Creature(int speed, int health, Class<? extends Entity> target) {
+    public Creature(int speed, int health) {
         this.speed = speed;
         this.health = health;
-        this.target = target;
     }
 
     public void makeMove(GameContext context) {
@@ -33,19 +29,19 @@ public abstract class Creature extends Entity {
             return;
         }
         List<Coordinates> path = context.findPath(this, targetCoords);
-        if (path.isEmpty()) {
-            context.randomMove(this);
-            return;
+        if (!path.isEmpty()) {
+            System.out.println("I'm " + this + " gonna move to " + targetCoords);
+            context.move(this, path.get(0));
+        } else {
+            System.out.println("Path is empty");
         }
-        context.canMove(this, path.get(0));
-        context.move(this, path.get(0));
     }
 
-    abstract void devourTarget(Coordinates targetCoords, GameContext context);
+    public void devourTarget(Coordinates targetCoords, GameContext context) {
+        context.devourEntity(this, targetCoords);
+    }
 
     public abstract int getSpeed();
 
     public abstract int getHealth();
-
-    public abstract void setHealth(int damage);
 }

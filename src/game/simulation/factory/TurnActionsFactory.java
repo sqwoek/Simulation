@@ -1,5 +1,6 @@
 package game.simulation.factory;
 
+import game.simulation.GameContext;
 import game.simulation.actions.WorldAction;
 import game.simulation.actions.AddGrassAction;
 import game.simulation.actions.AddHerbivoreAction;
@@ -9,11 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TurnActionsFactory {
-    public static List<WorldAction> createActions() {
+    public static List<WorldAction> createActions(GameContext gameContext) {
         List<WorldAction> worldActions = new ArrayList<>();
         worldActions.add(new AddGrassAction());
         worldActions.add(new AddHerbivoreAction());
-        worldActions.add(new MoveAnimalsAction());
+        worldActions.add(new MoveAnimalsAction(gameContext));
         return worldActions;
     }
 }

@@ -9,16 +9,9 @@ public class Herbivore extends Creature {
     private int health;
 
     public Herbivore(int speed, int health) {
-        super(speed, health, Grass.class);
+        super(speed, health);
         this.speed = speed;
         this.health = health;
-    }
-
-    @Override
-    void devourTarget(Coordinates targetCoords, ForestMap forestMap) {
-        forestMap.removeEntity(targetCoords);
-        forestMap.moveEntityTo(this, targetCoords);
-        System.out.println("Rabbit ate a grass at: " + targetCoords);
     }
 
     public void takeDamage(int damage) {
@@ -34,10 +27,6 @@ public class Herbivore extends Creature {
     public int getHealth() {
         System.out.println("Rabbit's health is: " + this.health);
         return this.health;
-    }
-
-    @Override
-    public void setHealth(int damage) {
     }
 
     @Override

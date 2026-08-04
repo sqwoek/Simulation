@@ -10,8 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MoveAnimalsAction implements WorldAction {
-    private final GameContext gameContext = new GameContext();
+    private final GameContext gameContext;
 
+    public MoveAnimalsAction(GameContext gameContext) {
+        this.gameContext = gameContext;
+    }
     @Override
     public void execute(ForestMap forestMap) {
         List<Creature> creatures = new ArrayList<>();
@@ -22,17 +25,7 @@ public class MoveAnimalsAction implements WorldAction {
         }
 
         for (Creature creature : creatures) {
-            Coordinates currentCoords = forestMap.getCurrentCoords(creature);
-            if (currentCoords == null) {
-                continue;
-            }
-
             creature.makeMove(gameContext);
-
-            Coordinates newCoords = forestMap.getCurrentCoords(creature);
-            if (!currentCoords.equals(newCoords)) {
-                forestMap.moveEntityTo(creature, newCoords);
-            }
         }
     }
 }

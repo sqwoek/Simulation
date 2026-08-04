@@ -2,6 +2,7 @@ package game.simulation;
 
 import game.ForestMap;
 import game.MapRenderer;
+import game.simulation.actions.WorldAction;
 import game.simulation.factory.InitActionsFactory;
 import game.simulation.factory.TurnActionsFactory;
 
@@ -11,14 +12,18 @@ public class Simulation {
     private final ForestMap forestMap;
     private final List<WorldAction> initWorldActions;
     private final List<WorldAction> turnWorldActions;
+    private final BreadthPathFinder pathFinder;
+    private final GameContext gameContext;
     private boolean running = false;
     private int turnCount;
 
     public Simulation() {
         this.forestMap = new ForestMap();
         this.turnCount = 0;
+        this.pathFinder = new BreadthPathFinder();
         this.initWorldActions = InitActionsFactory.createActions();
-        this.turnWorldActions = TurnActionsFactory.createActions();
+        this.gameContext = new GameContext(forestMap, pathFinder);
+        this.turnWorldActions = TurnActionsFactory.createActions(gameContext);
     }
 
     public void nextTurn() {

@@ -10,24 +10,10 @@ public class Predator extends Creature {
     private int attack;
 
     public Predator(int speed, int health, int attack) {
-        super(speed, health, Herbivore.class);
+        super(speed, health);
         this.speed = speed;
         this.health = health;
         this.attack = attack;
-    }
-
-    @Override
-    void devourTarget(Coordinates targetCoords, ForestMap forestMap) {
-        Entity entity = forestMap.getEntity(targetCoords);
-        if (entity instanceof Herbivore herbivore) {
-            herbivore.takeDamage(attack);
-            System.out.println("Predator attacked rabbit at: " + targetCoords);
-            if (herbivore.getHealth() <= 0) {
-                forestMap.removeEntity(targetCoords);
-                forestMap.moveEntityTo(this, targetCoords);
-                System.out.println("Rabbit dead at: " + targetCoords);
-            }
-        }
     }
 
     @Override
@@ -40,8 +26,9 @@ public class Predator extends Creature {
         return health;
     }
 
-    @Override
-    public void setHealth(int damage) {}
+    public int getAttack() {
+        return attack;
+    }
 
     @Override
     public String toString() {
