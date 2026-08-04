@@ -113,7 +113,6 @@ public abstract class Creature extends Entity {
                 coordinates.shift(0, 1),
                 coordinates.shift(0, -1)
         );
-        int mistakes = 0;
 
         while (true) {
             int rndm = random.nextInt(4);
@@ -122,11 +121,6 @@ public abstract class Creature extends Entity {
                 forestMap.moveEntityTo(this, target);
                 System.out.println(this + " moved to: " + coordinates);
                 return;
-            } else {
-                mistakes++;
-                if (mistakes == 100) {
-                    throw new ArithmeticException("Need to solve that later...");
-                }
             }
         }
     }

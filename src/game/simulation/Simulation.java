@@ -2,8 +2,8 @@ package game.simulation;
 
 import game.ForestMap;
 import game.MapRenderer;
-import game.simulation.actions.InitActionsFactory;
-import game.simulation.actions.TurnActionsFactory;
+import game.simulation.actions.factory.InitActionsFactory;
+import game.simulation.actions.factory.TurnActionsFactory;
 import game.simulation.actions.Action;
 
 import java.util.List;
