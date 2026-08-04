@@ -65,7 +65,7 @@ public abstract class Creature extends Entity {
         }
         // going forward to the target
         if (forestMap.isSquareGoodForMove(this, nextStep)) {
-            forestMap.moveCreatureTo(this, nextStep);
+            forestMap.moveEntityTo(this, nextStep);
             return;
         }
 
@@ -75,11 +75,11 @@ public abstract class Creature extends Entity {
             Coordinates down = new Coordinates(x, y + 1);
 
             if (forestMap.isSquareGoodForMove(this, up)) {
-                forestMap.moveCreatureTo(this, up);
+                forestMap.moveEntityTo(this, up);
                 return;
             }
             if (forestMap.isSquareGoodForMove(this, down)) {
-                forestMap.moveCreatureTo(this, down);
+                forestMap.moveEntityTo(this, down);
                 return;
             }
         }
@@ -90,11 +90,11 @@ public abstract class Creature extends Entity {
             Coordinates right = new Coordinates(x + 1, y);
 
             if (forestMap.isSquareGoodForMove(this, left)) {
-                forestMap.moveCreatureTo(this, left);
+                forestMap.moveEntityTo(this, left);
                 return;
             }
             if (forestMap.isSquareGoodForMove(this, right)) {
-                forestMap.moveCreatureTo(this, right);
+                forestMap.moveEntityTo(this, right);
                 return;
             }
         }
@@ -119,7 +119,7 @@ public abstract class Creature extends Entity {
             int rndm = random.nextInt(4);
             Coordinates target = directions.get(rndm);
             if (forestMap.isSquareGoodForMove(this, target)) {
-                forestMap.moveCreatureTo(this, target);
+                forestMap.moveEntityTo(this, target);
                 System.out.println(this + " moved to: " + coordinates);
                 return;
             } else {

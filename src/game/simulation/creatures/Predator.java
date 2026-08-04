@@ -4,10 +4,6 @@ import game.ForestMap;
 import game.simulation.Coordinates;
 import game.simulation.Entity;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
 public class Predator extends Creature {
     private int speed;
     private int health;
@@ -28,7 +24,7 @@ public class Predator extends Creature {
             System.out.println("Predator attacked rabbit at: " + targetCoords);
             if (herbivore.getHealth() <= 0) {
                 forestMap.removeEntity(targetCoords);
-                forestMap.moveCreatureTo(this, targetCoords);
+                forestMap.moveEntityTo(this, targetCoords);
                 System.out.println("Rabbit dead at: " + targetCoords);
             }
         }
@@ -45,9 +41,7 @@ public class Predator extends Creature {
     }
 
     @Override
-    public void setHealth(int damage) {
-
-    }
+    public void setHealth(int damage) {}
 
     @Override
     public String toString() {

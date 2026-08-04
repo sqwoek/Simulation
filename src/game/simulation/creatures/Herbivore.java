@@ -17,7 +17,7 @@ public class Herbivore extends Creature {
     @Override
     void devourTarget(Coordinates targetCoords, ForestMap forestMap) {
         forestMap.removeEntity(targetCoords);
-        forestMap.moveCreatureTo(this, targetCoords);
+        forestMap.moveEntityTo(this, targetCoords);
         System.out.println("Rabbit ate a grass at: " + targetCoords);
     }
 

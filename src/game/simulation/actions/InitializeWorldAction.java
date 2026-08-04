@@ -38,14 +38,14 @@ public class InitializeWorldAction implements Action{
                     case 2 -> new Grass();
                     default -> null;
                 };
-                forestMap.addEntity(coordinates, fieldObject);
+                forestMap.placeEntity(coordinates, fieldObject);
             }
         }
 
         for (Creature creature : creatures) {
             int x = random.nextInt(1, MAP_SIZE);
             int y = random.nextInt(1, MAP_SIZE);
-            forestMap.addEntity(new Coordinates(x, y), creature);
+            forestMap.placeEntity(new Coordinates(x, y), creature);
         }
     }
 }

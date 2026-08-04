@@ -5,43 +5,48 @@ import game.simulation.Entity;
 import game.simulation.creatures.Creature;
 import game.simulation.creatures.Herbivore;
 import game.simulation.creatures.Predator;
-import game.simulation.fieldObjects.FieldObject;
 import game.simulation.fieldObjects.Grass;
-import game.simulation.fieldObjects.Rock;
-import game.simulation.fieldObjects.Tree;
 
 import java.util.*;
 
 public class ForestMap {
-    private final Map<Coordinates, Entity> map = new HashMap<>();
     private final Random random = new Random();
-    private static final int MAP_SIZE = 10;
+    private static final int MAP_WIDTH = 10;
+    private static final int MAP_HEIGHT = 10;
+    private final Map<Coordinates, Entity> cells = new HashMap<>();
 
     public ForestMap() {
 
     }
 
-    public void addEntity(Coordinates coordinates, Entity entity) {
-        map.put(coordinates, entity);
+    public void placeEntity(Coordinates coordinates, Entity entity) {
+        cells.put(coordinates, entity);
     }
 
     public Entity getEntity(Coordinates coordinates) {
-        return map.get(coordinates);
+        return cells.get(coordinates);
+    }
+
+    public void moveEntityTo(Entity entity, Coordinates coords) {
+        Coordinates currentCoords = getCurrentCoords(entity);
+        cells.remove(currentCoords);
+        cells.put(coords, entity);
+    }
+
+    public void removeEntity(Coordinates currentCoords) {
+        cells.remove(currentCoords);
+    }
+
+    public boolean isCellEmpty(Coordinates coordinates) {
+        return !cells.containsKey(coordinates);
     }
 
     public Map<Coordinates, Entity> getMap() {
-        return map;
-    }
-
-    public boolean isEmpty(Coordinates coordinates) {
-        if (map.containsKey(coordinates)) {
-            return false;
-        }
-        return true;
+        return new HashMap<>(cells);
     }
 
     public Coordinates getCurrentCoords(Entity target) {
-        for (Map.Entry<Coordinates, Entity> entry : map.entrySet()) {
+        for (Map.Entry<Coordinates, Entity> entry : cells.entrySet()) {
             if (entry.getValue() == target) {
                 return entry.getKey();
             }
@@ -56,7 +61,7 @@ public class ForestMap {
         }
         Coordinates nearest = null;
         int minDistance = Integer.MAX_VALUE;
-        for (Map.Entry<Coordinates, Entity> entry : map.entrySet()) {
+        for (Map.Entry<Coordinates, Entity> entry : cells.entrySet()) {
             Entity entity = entry.getValue();
             if (target.isInstance(entity)) {
                 Coordinates cord = entry.getKey();
@@ -72,11 +77,11 @@ public class ForestMap {
     }
 
     public boolean isSquareGoodForMove(Creature creature, Coordinates target) {
-        if (target.getX() <= 0 || target.getX() > MAP_SIZE ||
-                target.getY() <= 0 || target.getY() > MAP_SIZE) {
+        if (target.getX() <= 0 || target.getX() > MAP_WIDTH ||
+                target.getY() <= 0 || target.getY() > MAP_HEIGHT) {
             return false;
         }
-        Entity entity = map.get(target);
+        Entity entity = cells.get(target);
         if (entity == null) {
             return true;
         }
@@ -99,24 +104,14 @@ public class ForestMap {
         return (dx + dy) == 1;
     }
 
-    public void moveCreatureTo(Creature creature, Coordinates coords) {
-        Coordinates currentCoords = getCurrentCoords(creature);
-        map.remove(currentCoords);
-        map.put(coords, creature);
-    }
-
-    public void removeEntity(Coordinates currentCoords) {
-        map.remove(currentCoords);
-    }
-
     public void addGrass() {
         while (true) {
-            int x = random.nextInt(MAP_SIZE);
-            int y = random.nextInt(MAP_SIZE);
+            int x = random.nextInt(MAP_WIDTH);
+            int y = random.nextInt(MAP_HEIGHT);
 
             Coordinates coordinates = new Coordinates(x, y);
-            if (map.get(coordinates) == null) {
-                map.put(coordinates, new Grass());
+            if (cells.get(coordinates) == null) {
+                cells.put(coordinates, new Grass());
                 return;
             }
         }
@@ -124,14 +119,22 @@ public class ForestMap {
 
     public void addHerbivore() {
         while (true) {
-            int x = random.nextInt(MAP_SIZE);
-            int y = random.nextInt(MAP_SIZE);
+            int x = random.nextInt(MAP_WIDTH);
+            int y = random.nextInt(MAP_HEIGHT);
 
             Coordinates coordinates = new Coordinates(x, y);
-            if (map.get(coordinates) == null) {
-                map.put(coordinates, new Herbivore(1, 100));
+            if (cells.get(coordinates) == null) {
+                cells.put(coordinates, new Herbivore(1, 100));
                 return;
             }
         }
+    }
+
+    public int getWidth() {
+        return MAP_WIDTH;
+    }
+
+    public int getHeight() {
+        return MAP_HEIGHT;
     }
 }
