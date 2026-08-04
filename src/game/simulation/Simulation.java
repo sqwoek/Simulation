@@ -2,35 +2,34 @@ package game.simulation;
 
 import game.ForestMap;
 import game.MapRenderer;
-import game.simulation.actions.factory.InitActionsFactory;
-import game.simulation.actions.factory.TurnActionsFactory;
-import game.simulation.actions.Action;
+import game.simulation.factory.InitActionsFactory;
+import game.simulation.factory.TurnActionsFactory;
 
 import java.util.List;
 
 public class Simulation {
     private final ForestMap forestMap;
-    private final List<Action> initActions;
-    private final List<Action> turnActions;
+    private final List<WorldAction> initWorldActions;
+    private final List<WorldAction> turnWorldActions;
     private boolean running = false;
     private int turnCount;
 
     public Simulation() {
         this.forestMap = new ForestMap();
         this.turnCount = 0;
-        this.initActions = InitActionsFactory.createActions();
-        this.turnActions = TurnActionsFactory.createActions();
+        this.initWorldActions = InitActionsFactory.createActions();
+        this.turnWorldActions = TurnActionsFactory.createActions();
     }
 
     public void nextTurn() {
-        for (Action turnAction : turnActions) {
-            turnAction.execute(forestMap);
+        for (WorldAction turnWorldAction : turnWorldActions) {
+            turnWorldAction.execute(forestMap);
         }
     }
 
     public void startSimulation() {
-        for (Action initAction : initActions) {
-            initAction.execute(forestMap);
+        for (WorldAction initWorldAction : initWorldActions) {
+            initWorldAction.execute(forestMap);
         }
         MapRenderer.printMap(forestMap);
         running = true;

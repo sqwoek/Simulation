@@ -4,7 +4,7 @@ import game.ForestMap;
 import game.simulation.Entity;
 import game.simulation.fieldObjects.Grass;
 
-public class AddGrassAction implements Action{
+public class AddGrassAction implements WorldAction {
     private static final int GRASS_MINIMUM = 4;
 
     @Override

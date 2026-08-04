@@ -1,8 +1,10 @@
 package game.simulation.creatures;
 
 import game.ForestMap;
+import game.simulation.BreadthPathFinder;
 import game.simulation.Coordinates;
 import game.simulation.Entity;
+import game.simulation.GameContext;
 
 import java.util.List;
 import java.util.Random;
@@ -12,6 +14,7 @@ public abstract class Creature extends Entity {
     private int health;
     private final Class<? extends Entity> target;
     private final Random random = new Random();
+    private final BreadthPathFinder pathFinder = new BreadthPathFinder();
 
     public Creature(int speed, int health, Class<? extends Entity> target) {
         this.speed = speed;
@@ -19,111 +22,26 @@ public abstract class Creature extends Entity {
         this.target = target;
     }
 
-    public void makeMove(ForestMap forestMap) {
-        int steps = speed;
-        while (steps > 0) {
-            Coordinates currentCoords = forestMap.getCurrentCoords(this);
-            if (currentCoords == null) {
-                return;
-            }
-            Coordinates targetCoords = forestMap.getNearestTargetCords(this, target);
-            if (targetCoords == null) {
-                wanderAround(forestMap);
-                steps--;
-                continue;
-            }
-            System.out.println(this + " " + currentCoords + " see target at: " + targetCoords);
-
-            if (forestMap.isTargetClose(this, targetCoords)) {
-                devourTarget(targetCoords, forestMap);
-                break;
-            }
-            moveToTarget(targetCoords, forestMap);
-            steps--;
-        }
-    }
-
-    private void moveToTarget(Coordinates targetCoords, ForestMap forestMap) {
-        Coordinates currentCoords = forestMap.getCurrentCoords(this);
-
-        int x = currentCoords.getX();
-        int y = currentCoords.getY();
-
-        int targetX = targetCoords.getX();
-        int targetY = targetCoords.getY();
-
-        Coordinates nextStep = currentCoords;
-
-        if (x < targetX) {
-            nextStep = new Coordinates(x + 1, y);
-        } else if (x > targetX) {
-            nextStep = new Coordinates(x - 1, y);
-        } else if (y < targetY) {
-            nextStep = new Coordinates(x, y + 1);
-        } else if (y > targetY) {
-            nextStep = new Coordinates(x, y - 1);
-        }
-        // going forward to the target
-        if (forestMap.isSquareGoodForMove(this, nextStep)) {
-            forestMap.moveEntityTo(this, nextStep);
+    public void makeMove(GameContext context) {
+        Coordinates targetCoords = context.findNearestTarget(this);
+        if (targetCoords == null) {
+            context.randomMove(this);
             return;
         }
-
-        // if the path is blocked, try to go in x direction
-        if (x != targetX) {
-            Coordinates up = new Coordinates(x, y - 1);
-            Coordinates down = new Coordinates(x, y + 1);
-
-            if (forestMap.isSquareGoodForMove(this, up)) {
-                forestMap.moveEntityTo(this, up);
-                return;
-            }
-            if (forestMap.isSquareGoodForMove(this, down)) {
-                forestMap.moveEntityTo(this, down);
-                return;
-            }
+        if (context.isTargetClose(this, targetCoords)) {
+            devourTarget(targetCoords, context);
+            return;
         }
-
-        // if the path is blocked, try to go in y direction
-        if (y != targetY) {
-            Coordinates left = new Coordinates(x - 1, y);
-            Coordinates right = new Coordinates(x + 1, y);
-
-            if (forestMap.isSquareGoodForMove(this, left)) {
-                forestMap.moveEntityTo(this, left);
-                return;
-            }
-            if (forestMap.isSquareGoodForMove(this, right)) {
-                forestMap.moveEntityTo(this, right);
-                return;
-            }
+        List<Coordinates> path = context.findPath(this, targetCoords);
+        if (path.isEmpty()) {
+            context.randomMove(this);
+            return;
         }
-
-        // if either of paths is blocked, go to randoms square
-        wanderAround(forestMap);
+        context.canMove(this, path.get(0));
+        context.move(this, path.get(0));
     }
 
-    abstract void devourTarget(Coordinates targetCoords, ForestMap forestMap);
-
-    private void wanderAround(ForestMap forestMap) {
-        Coordinates coordinates = forestMap.getCurrentCoords(this);
-        List<Coordinates> directions = List.of(
-                coordinates.shift(1, 0),
-                coordinates.shift(-1, 0),
-                coordinates.shift(0, 1),
-                coordinates.shift(0, -1)
-        );
-
-        while (true) {
-            int rndm = random.nextInt(4);
-            Coordinates target = directions.get(rndm);
-            if (forestMap.isSquareGoodForMove(this, target)) {
-                forestMap.moveEntityTo(this, target);
-                System.out.println(this + " moved to: " + coordinates);
-                return;
-            }
-        }
-    }
+    abstract void devourTarget(Coordinates targetCoords, GameContext context);
 
     public abstract int getSpeed();
 

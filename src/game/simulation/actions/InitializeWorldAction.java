@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class InitializeWorldAction implements Action{
+public class InitializeWorldAction implements WorldAction {
     private static final int MAP_SIZE = 10;
     private final Random random = new Random();
 

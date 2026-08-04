@@ -4,7 +4,7 @@ import game.ForestMap;
 import game.simulation.Entity;
 import game.simulation.creatures.Herbivore;
 
-public class AddHerbivoreAction implements Action {
+public class AddHerbivoreAction implements WorldAction {
     private static final int HERBIVORE_MINIMUM = 4;
 
     @Override

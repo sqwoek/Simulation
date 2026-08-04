@@ -2,6 +2,6 @@ package game.simulation.actions;
 
 import game.ForestMap;
 
-public interface Action {
+public interface WorldAction {
     void execute(ForestMap forestMap);
 }

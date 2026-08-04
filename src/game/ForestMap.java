@@ -13,45 +13,49 @@ public class ForestMap {
     private final Random random = new Random();
     private static final int MAP_WIDTH = 10;
     private static final int MAP_HEIGHT = 10;
-    private final Map<Coordinates, Entity> cells = new HashMap<>();
+    private final Map<Coordinates, Entity> entities  = new HashMap<>();
 
     public ForestMap() {
 
     }
 
     public void placeEntity(Coordinates coordinates, Entity entity) {
-        cells.put(coordinates, entity);
+        entities.put(coordinates, entity);
     }
 
     public Entity getEntity(Coordinates coordinates) {
-        return cells.get(coordinates);
+        return entities.get(coordinates);
     }
 
     public void moveEntityTo(Entity entity, Coordinates coords) {
         Coordinates currentCoords = getCurrentCoords(entity);
-        cells.remove(currentCoords);
-        cells.put(coords, entity);
+        entities.remove(currentCoords);
+        entities.put(coords, entity);
     }
 
     public void removeEntity(Coordinates currentCoords) {
-        cells.remove(currentCoords);
+        entities.remove(currentCoords);
     }
 
     public boolean isCellEmpty(Coordinates coordinates) {
-        return !cells.containsKey(coordinates);
+        return !entities.containsKey(coordinates);
     }
 
     public Map<Coordinates, Entity> getMap() {
-        return new HashMap<>(cells);
+        return new HashMap<>(entities);
     }
 
     public Coordinates getCurrentCoords(Entity target) {
-        for (Map.Entry<Coordinates, Entity> entry : cells.entrySet()) {
+        for (Map.Entry<Coordinates, Entity> entry : entities.entrySet()) {
             if (entry.getValue() == target) {
                 return entry.getKey();
             }
         }
         return null;
+    }
+
+    public boolean isWithinBorders(Coordinates coords) {
+        return coords.getX() > 0 && coords.getX() <= MAP_WIDTH && coords.getY() > 0 && coords.getY() <= MAP_HEIGHT;
     }
 
     public Coordinates getNearestTargetCords(Creature creature, Class<? extends Entity> target) {
@@ -61,7 +65,7 @@ public class ForestMap {
         }
         Coordinates nearest = null;
         int minDistance = Integer.MAX_VALUE;
-        for (Map.Entry<Coordinates, Entity> entry : cells.entrySet()) {
+        for (Map.Entry<Coordinates, Entity> entry : entities.entrySet()) {
             Entity entity = entry.getValue();
             if (target.isInstance(entity)) {
                 Coordinates cord = entry.getKey();
@@ -81,7 +85,7 @@ public class ForestMap {
                 target.getY() <= 0 || target.getY() > MAP_HEIGHT) {
             return false;
         }
-        Entity entity = cells.get(target);
+        Entity entity = entities.get(target);
         if (entity == null) {
             return true;
         }
@@ -110,8 +114,8 @@ public class ForestMap {
             int y = random.nextInt(MAP_HEIGHT);
 
             Coordinates coordinates = new Coordinates(x, y);
-            if (cells.get(coordinates) == null) {
-                cells.put(coordinates, new Grass());
+            if (entities.get(coordinates) == null) {
+                entities.put(coordinates, new Grass());
                 return;
             }
         }
@@ -123,8 +127,8 @@ public class ForestMap {
             int y = random.nextInt(MAP_HEIGHT);
 
             Coordinates coordinates = new Coordinates(x, y);
-            if (cells.get(coordinates) == null) {
-                cells.put(coordinates, new Herbivore(1, 100));
+            if (entities.get(coordinates) == null) {
+                entities.put(coordinates, new Herbivore(1, 100));
                 return;
             }
         }
@@ -136,5 +140,9 @@ public class ForestMap {
 
     public int getHeight() {
         return MAP_HEIGHT;
+    }
+
+    public Map<Coordinates, Entity> getAllEntities() {
+        return Map.copyOf(entities);
     }
 }
