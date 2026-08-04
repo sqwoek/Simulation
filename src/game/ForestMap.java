@@ -58,6 +58,69 @@ public class ForestMap {
         return coords.getX() > 0 && coords.getX() <= MAP_WIDTH && coords.getY() > 0 && coords.getY() <= MAP_HEIGHT;
     }
 
+    public Coordinates getNearestTargetCords(Creature creature, Class<? extends Entity> target) {
+        Coordinates currentCoords = getCurrentCoords(creature);
+        if (currentCoords == null) {
+            return null;
+        }
+        Coordinates nearest = null;
+        int minDistance = Integer.MAX_VALUE;
+        for (Map.Entry<Coordinates, Entity> entry : entities.entrySet()) {
+            Entity entity = entry.getValue();
+            if (target.isInstance(entity)) {
+                Coordinates cord = entry.getKey();
+                int distance = Math.abs(cord.getX() - currentCoords.getX()) +
+                        Math.abs(cord.getY() - currentCoords.getY());
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    nearest = cord;
+                }
+            }
+        }
+        return nearest;
+    }
+
+    public boolean isSquareGoodForMove(Creature creature, Coordinates target) {
+        if (target.getX() <= 0 || target.getX() > MAP_WIDTH ||
+                target.getY() <= 0 || target.getY() > MAP_HEIGHT) {
+            return false;
+        }
+        Entity entity = entities.get(target);
+        if (entity == null) {
+            return true;
+        }
+        if (creature instanceof Herbivore && entity instanceof Grass) {
+            return true;
+        }
+        if (creature instanceof Predator && entity instanceof Herbivore) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isTargetClose(Creature creature, Coordinates targetCoords) {
+        Coordinates currentCoords = getCurrentCoords(creature);
+        if (currentCoords == null) {
+            throw new RuntimeException();
+        }
+        int dx = Math.abs(currentCoords.getX() - targetCoords.getX());
+        int dy = Math.abs(currentCoords.getY() - targetCoords.getY());
+        return (dx + dy) == 1;
+    }
+
+    public void addGrass() {
+        while (true) {
+            int x = random.nextInt(MAP_WIDTH);
+            int y = random.nextInt(MAP_HEIGHT);
+
+            Coordinates coordinates = new Coordinates(x, y);
+            if (entities.get(coordinates) == null) {
+                entities.put(coordinates, new Grass());
+                return;
+            }
+        }
+    }
+
     public void addHerbivore() {
         while (true) {
             int x = random.nextInt(MAP_WIDTH);

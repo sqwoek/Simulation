@@ -3,8 +3,6 @@ package game;
 import game.simulation.Coordinates;
 import game.simulation.Entity;
 import game.simulation.creatures.Creature;
-import game.simulation.creatures.Herbivore;
-import game.simulation.creatures.Predator;
 import game.simulation.fieldObjects.FieldObject;
 
 public class MapRenderer {

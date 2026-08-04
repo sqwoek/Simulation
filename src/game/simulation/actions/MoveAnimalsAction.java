@@ -1,7 +1,6 @@
 package game.simulation.actions;
 
 import game.ForestMap;
-import game.simulation.Coordinates;
 import game.simulation.Entity;
 import game.simulation.GameContext;
 import game.simulation.creatures.Creature;

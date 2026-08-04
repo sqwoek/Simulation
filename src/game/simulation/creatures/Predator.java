@@ -1,9 +1,5 @@
 package game.simulation.creatures;
 
-import game.ForestMap;
-import game.simulation.Coordinates;
-import game.simulation.Entity;
-
 public class Predator extends Creature {
     private int speed;
     private int health;

@@ -81,9 +81,12 @@ public class GameContext {
         return nearest;
     }
 
-    public Coordinates randomMove(Creature creature) {
+    public void randomMove(Creature creature) {
         System.out.println(creature + " want to random move");
         Coordinates pos = getCoordinates(creature);
+        if (pos == null) {
+            return;
+        }
         List<Coordinates> directions = List.of(
                 pos.shift(1, 0),
                 pos.shift(-1, 0),
@@ -100,7 +103,6 @@ public class GameContext {
                 return;
             }
         }
-        return pos;
     }
 
     public boolean isTargetClose(Creature creature, Coordinates target) {
@@ -127,6 +129,8 @@ public class GameContext {
         }
         if (creature instanceof Herbivore && edible instanceof Grass) {
             map.removeEntity(targetCoords);
+            System.out.println("Rabbit ate a grass! Rabbit's coords are " + map.getCurrentCoords(creature) + " Grass coords were "
+                    + targetCoords);
         }
     }
 }

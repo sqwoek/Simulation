@@ -1,13 +1,10 @@
 package game.simulation.creatures;
 
-import game.ForestMap;
-import game.simulation.BreadthPathFinder;
 import game.simulation.Coordinates;
 import game.simulation.Entity;
 import game.simulation.GameContext;
 
 import java.util.List;
-import java.util.Random;
 
 public abstract class Creature extends Entity {
     private int speed;
@@ -33,7 +30,7 @@ public abstract class Creature extends Entity {
             System.out.println("I'm " + this + " gonna move to " + targetCoords);
             context.move(this, path.get(0));
         } else {
-            System.out.println("Path is empty");
+            System.out.println(this + " " + context.getCoordinates(this) + ": Path is empty");
         }
     }
 

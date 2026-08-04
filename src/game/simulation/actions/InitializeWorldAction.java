@@ -5,7 +5,6 @@ import game.simulation.Coordinates;
 import game.simulation.creatures.Creature;
 import game.simulation.creatures.Herbivore;
 import game.simulation.creatures.Predator;
-import game.simulation.fieldObjects.FieldObject;
 import game.simulation.fieldObjects.Grass;
 import game.simulation.fieldObjects.Rock;
 import game.simulation.fieldObjects.Tree;
