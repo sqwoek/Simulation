@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Random;
 
 public class GameContext {
+    private static final int GRASS_MINIMUM = 4;
+    private static final int HERBIVORE_MINIMUM = 4;
     private final ForestMap map;
     private final BreadthPathFinder pathFinder;
     private final Random rndm = new Random();
@@ -26,7 +28,7 @@ public class GameContext {
 
     public List<Coordinates> findPath(Creature creature, Coordinates to) {
         Coordinates from = map.getCurrentCoords(creature);
-        return pathFinder.findPath(map, creature, from, to);
+        return pathFinder.findPath(map, from, to);
     }
 
     public boolean canMove(Creature creature, Coordinates target) {
@@ -38,6 +40,10 @@ public class GameContext {
         }
         Entity entity = map.getEntity(target);
 
+        return isEdibleFor(entity, creature);
+    }
+
+    public boolean isEdibleFor(Entity entity, Creature creature) {
         if (creature instanceof Herbivore && entity instanceof Grass) {
             return true;
         }
@@ -133,5 +139,37 @@ public class GameContext {
             System.out.println("Rabbit ate a grass! Rabbit's coords are " + map.getCurrentCoords(creature) + " Grass coords were "
                     + targetCoords);
         }
+    }
+
+    public boolean needAddEntity(Entity entity) {
+        long count = map.getMap().values().stream()
+                .filter(e -> entity.getClass().isInstance(e))
+                .count();
+        if (entity instanceof Grass) {
+            return count < GRASS_MINIMUM;
+        }
+        if (entity instanceof Herbivore) {
+            return count < HERBIVORE_MINIMUM;
+        }
+        return false;
+    }
+
+    public void addEntity(Entity entity, Coordinates coords) {
+        map.placeEntity(coords, entity);
+    }
+
+    public Coordinates findEmptyCell() {
+        while (true) {
+            int x = rndm.nextInt(map.getWidth()) + 1;
+            int y = rndm.nextInt(map.getHeight()) + 1;
+            Coordinates coords = new Coordinates(x, y);
+            if (map.isEmpty(coords)) {
+                return coords;
+            }
+        }
+    }
+
+    public Map<Coordinates, Entity> getMap() {
+        return map.getMap();
     }
 }

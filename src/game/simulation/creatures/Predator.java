@@ -1,5 +1,7 @@
 package game.simulation.creatures;
 
+import game.simulation.Entity;
+
 public class Predator extends Creature {
     private int speed;
     private int health;
@@ -10,6 +12,11 @@ public class Predator extends Creature {
         this.speed = speed;
         this.health = health;
         this.attack = attack;
+    }
+
+    @Override
+    public boolean isFood(Entity entity) {
+        return entity instanceof Herbivore;
     }
 
     @Override

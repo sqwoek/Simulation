@@ -1,5 +1,8 @@
 package game.simulation.creatures;
 
+import game.simulation.Entity;
+import game.simulation.fieldObjects.Grass;
+
 public class Herbivore extends Creature {
     private int speed;
     private int health;
@@ -12,6 +15,11 @@ public class Herbivore extends Creature {
 
     public void takeDamage(int damage) {
         this.health = health - damage;
+    }
+
+    @Override
+    public boolean isFood(Entity entity) {
+        return entity instanceof Grass;
     }
 
     @Override

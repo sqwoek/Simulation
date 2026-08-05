@@ -1,20 +1,20 @@
 package game.simulation.factory;
 
-import game.simulation.GameContext;
+import game.simulation.actions.AddEntityWorldAction;
 import game.simulation.actions.WorldAction;
-import game.simulation.actions.AddGrassAction;
-import game.simulation.actions.AddHerbivoreAction;
 import game.simulation.actions.MoveAnimalsAction;
+import game.simulation.creatures.Herbivore;
+import game.simulation.fieldObjects.Grass;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TurnActionsFactory {
-    public static List<WorldAction> createActions(GameContext gameContext) {
+    public static List<WorldAction> createActions() {
         List<WorldAction> worldActions = new ArrayList<>();
-        worldActions.add(new AddGrassAction());
-        worldActions.add(new AddHerbivoreAction());
-        worldActions.add(new MoveAnimalsAction(gameContext));
+        worldActions.add(new AddEntityWorldAction(new Grass()));
+        worldActions.add(new AddEntityWorldAction(new Herbivore(1, 100)));
+        worldActions.add(new MoveAnimalsAction());
         return worldActions;
     }
 }

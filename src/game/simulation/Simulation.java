@@ -23,18 +23,18 @@ public class Simulation {
         this.pathFinder = new BreadthPathFinder();
         this.initWorldActions = InitActionsFactory.createActions();
         this.gameContext = new GameContext(forestMap, pathFinder);
-        this.turnWorldActions = TurnActionsFactory.createActions(gameContext);
+        this.turnWorldActions = TurnActionsFactory.createActions();
     }
 
     public void nextTurn() {
         for (WorldAction turnWorldAction : turnWorldActions) {
-            turnWorldAction.execute(forestMap);
+            turnWorldAction.execute(gameContext);
         }
     }
 
     public void startSimulation() {
         for (WorldAction initWorldAction : initWorldActions) {
-            initWorldAction.execute(forestMap);
+            initWorldAction.execute(gameContext);
         }
         MapRenderer.printMap(forestMap);
         running = true;

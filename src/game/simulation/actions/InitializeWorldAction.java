@@ -1,7 +1,7 @@
 package game.simulation.actions;
 
-import game.ForestMap;
 import game.simulation.Coordinates;
+import game.simulation.GameContext;
 import game.simulation.creatures.Creature;
 import game.simulation.creatures.Herbivore;
 import game.simulation.creatures.Predator;
@@ -18,7 +18,7 @@ public class InitializeWorldAction implements WorldAction {
     private final Random random = new Random();
 
     @Override
-    public void execute(ForestMap forestMap) {
+    public void execute(GameContext gameContext) {
         List<Creature> creatures = new ArrayList<>();
         creatures.add(new Herbivore(1, 100));
         creatures.add(new Herbivore(1, 100));
@@ -32,11 +32,11 @@ public class InitializeWorldAction implements WorldAction {
                 Coordinates coordinates = new Coordinates(i, j);
                 int rndm = random.nextInt(MAP_SIZE);
                 if (rndm == 0) {
-                    forestMap.placeEntity(coordinates, new Rock());
+                    gameContext.addEntity(new Rock(), coordinates);
                 } else if (rndm == 1) {
-                    forestMap.placeEntity(coordinates, new Tree());
+                    gameContext.addEntity(new Tree(), coordinates);
                 } else if (rndm == 2) {
-                    forestMap.placeEntity(coordinates, new Grass());
+                    gameContext.addEntity(new Grass(), coordinates);
                 }
             }
         }
@@ -44,7 +44,7 @@ public class InitializeWorldAction implements WorldAction {
         for (Creature creature : creatures) {
             int x = random.nextInt(1, MAP_SIZE);
             int y = random.nextInt(1, MAP_SIZE);
-            forestMap.placeEntity(new Coordinates(x, y), creature);
+            gameContext.addEntity(creature, new Coordinates(x, y));
         }
     }
 }

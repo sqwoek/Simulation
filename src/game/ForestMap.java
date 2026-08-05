@@ -2,13 +2,10 @@ package game;
 
 import game.simulation.Coordinates;
 import game.simulation.Entity;
-import game.simulation.creatures.Herbivore;
-import game.simulation.fieldObjects.Grass;
 
 import java.util.*;
 
 public class ForestMap {
-    private final Random random = new Random();
     private static final int MAP_WIDTH = 10;
     private static final int MAP_HEIGHT = 10;
     private final Map<Coordinates, Entity> entities  = new HashMap<>();
@@ -66,32 +63,6 @@ public class ForestMap {
 
     public boolean isWithinBorders(Coordinates coords) {
         return coords.getX() > 0 && coords.getX() <= MAP_WIDTH && coords.getY() > 0 && coords.getY() <= MAP_HEIGHT;
-    }
-
-    public void addGrass() {
-        while (true) {
-            int x = random.nextInt(MAP_WIDTH);
-            int y = random.nextInt(MAP_HEIGHT);
-
-            Coordinates coordinates = new Coordinates(x, y);
-            if (entities.get(coordinates) == null) {
-                entities.put(coordinates, new Grass());
-                return;
-            }
-        }
-    }
-
-    public void addHerbivore() {
-        while (true) {
-            int x = random.nextInt(MAP_WIDTH);
-            int y = random.nextInt(MAP_HEIGHT);
-
-            Coordinates coordinates = new Coordinates(x, y);
-            if (entities.get(coordinates) == null) {
-                entities.put(coordinates, new Herbivore(1, 100));
-                return;
-            }
-        }
     }
 
     public int getWidth() {

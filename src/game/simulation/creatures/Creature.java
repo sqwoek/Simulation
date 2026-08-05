@@ -38,6 +38,8 @@ public abstract class Creature extends Entity {
         context.devourEntity(this, targetCoords);
     }
 
+    public abstract boolean isFood(Entity entity);
+
     public abstract int getSpeed();
 
     public abstract int getHealth();

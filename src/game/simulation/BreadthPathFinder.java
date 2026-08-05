@@ -1,15 +1,18 @@
 package game.simulation;
 
 import game.ForestMap;
-import game.simulation.creatures.Creature;
 
 import java.util.*;
 
 public class BreadthPathFinder {
-    private static final List<Coordinates> DIRECTIONS = List.of(new Coordinates(1, 0), new Coordinates(-1, 0),
-            new Coordinates(0, 1), new Coordinates(0, -1));
+    private static final List<Coordinates> DIRECTIONS = List.of(
+            new Coordinates(1, 0),
+            new Coordinates(-1, 0),
+            new Coordinates(0, 1),
+            new Coordinates(0, -1)
+    );
 
-    public List<Coordinates> findPath(ForestMap map, Creature creature, Coordinates from, Coordinates to) {
+    public List<Coordinates> findPath(ForestMap map, Coordinates from, Coordinates to) {
         if (from.equals(to)) {
             return Collections.emptyList();
         }

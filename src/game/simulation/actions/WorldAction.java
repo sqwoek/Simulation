@@ -1,7 +1,7 @@
 package game.simulation.actions;
 
-import game.ForestMap;
+import game.simulation.GameContext;
 
 public interface WorldAction {
-    void execute(ForestMap forestMap);
+    void execute(GameContext gameContext);
 }
