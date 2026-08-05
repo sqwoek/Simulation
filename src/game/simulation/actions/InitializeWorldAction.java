@@ -20,10 +20,10 @@ public class InitializeWorldAction implements WorldAction {
     @Override
     public void execute(GameContext gameContext) {
         List<Creature> creatures = new ArrayList<>();
-        creatures.add(new Herbivore(1, 100));
-        creatures.add(new Herbivore(1, 100));
-        creatures.add(new Herbivore(1, 100));
-        creatures.add(new Herbivore(1, 100));
+        creatures.add(new Herbivore(1, 50));
+        creatures.add(new Herbivore(1, 50));
+        creatures.add(new Herbivore(1, 50));
+        creatures.add(new Herbivore(1, 50));
         creatures.add(new Predator(2, 100, 35));
         creatures.add(new Predator(2, 100, 35));
 

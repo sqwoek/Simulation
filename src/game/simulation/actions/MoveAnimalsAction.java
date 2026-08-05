@@ -18,6 +18,9 @@ public class MoveAnimalsAction implements WorldAction {
         }
 
         for (Creature creature : creatures) {
+            if (gameContext.getCoordinates(creature) == null) {
+                continue;
+            }
             creature.makeMove(gameContext);
         }
     }

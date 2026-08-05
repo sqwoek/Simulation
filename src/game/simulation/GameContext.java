@@ -5,6 +5,8 @@ import game.simulation.creatures.Creature;
 import game.simulation.creatures.Herbivore;
 import game.simulation.creatures.Predator;
 import game.simulation.fieldObjects.Grass;
+import game.simulation.pathFinders.BreadthPathFinder;
+import game.simulation.pathFinders.PathFinder;
 
 import java.util.List;
 import java.util.Map;
@@ -14,10 +16,10 @@ public class GameContext {
     private static final int GRASS_MINIMUM = 4;
     private static final int HERBIVORE_MINIMUM = 4;
     private final ForestMap map;
-    private final BreadthPathFinder pathFinder;
+    private final PathFinder pathFinder;
     private final Random rndm = new Random();
 
-    public GameContext(ForestMap map, BreadthPathFinder pathFinder) {
+    public GameContext(ForestMap map, PathFinder pathFinder) {
         this.map = map;
         this.pathFinder = pathFinder;
     }
@@ -131,11 +133,6 @@ public class GameContext {
         return nearest;
     }
 
-    public void removeEntity(Entity entity) {
-        Coordinates targetCoords = getCoordinates(entity);
-        map.removeEntity(targetCoords);
-    }
-
     public boolean hasTarget(Creature creature) {
         if (getNearestTargetCoords(creature) != null) {
             return true;
@@ -143,7 +140,7 @@ public class GameContext {
         return false;
     }
 
-    public void moveTowardsTarget(Creature creature) {
+    public boolean moveTowardsTarget(Creature creature) {
         Coordinates from = getCoordinates(creature);
         Coordinates target = getNearestTargetCoords(creature);
         if (from == null || target == null) {
@@ -154,20 +151,24 @@ public class GameContext {
             if (target == null) {
                 System.out.println("I have no target");
             }
-            return;
+            return false;
         }
         List<Coordinates> path = pathFinder.getPath(map, from, target);
         if (!path.isEmpty()) {
+            System.out.println(from + creature.toString() + " moving onto " + path.get(0));
             move(creature, path.get(0));
-        } else {
-            System.out.println("Random move");
-            randomMove(creature);
+            return true;
         }
+        randomMove(creature);
+        return false;
     }
 
     public boolean isTargetClose(Creature creature) {
         Coordinates coords = getCoordinates(creature);
         Coordinates target = getNearestTargetCoords(creature);
+        if (coords == null || target == null) {
+            return false;
+        }
         return Math.abs(coords.getX() - target.getX()) + Math.abs(coords.getY() - target.getY()) == 1;
     }
 
@@ -186,7 +187,10 @@ public class GameContext {
 
     public void consume(Creature eater, Entity edible) {
         Coordinates targetCoords = getCoordinates(edible);
-        removeEntity(edible);
-        move(eater, targetCoords);
+        if (targetCoords == null) {
+            return;
+        }
+        map.removeEntity(targetCoords);
+        map.moveEntityTo(eater, targetCoords);
     }
 }

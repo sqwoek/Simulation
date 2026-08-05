@@ -1,10 +1,11 @@
-package game.simulation;
+package game.simulation.pathFinders;
 
 import game.ForestMap;
+import game.simulation.Coordinates;
 
 import java.util.*;
 
-public class BreadthPathFinder {
+public class BreadthPathFinder implements PathFinder{
     private static final List<Coordinates> DIRECTIONS = List.of(
             new Coordinates(1, 0),
             new Coordinates(-1, 0),
@@ -12,6 +13,7 @@ public class BreadthPathFinder {
             new Coordinates(0, -1)
     );
 
+    @Override
     public List<Coordinates> getPath(ForestMap map, Coordinates from, Coordinates to) {
         if (from.equals(to)) {
             return Collections.emptyList();

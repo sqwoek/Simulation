@@ -5,6 +5,8 @@ import game.MapRenderer;
 import game.simulation.actions.WorldAction;
 import game.simulation.factory.InitActionsFactory;
 import game.simulation.factory.TurnActionsFactory;
+import game.simulation.pathFinders.BreadthPathFinder;
+import game.simulation.pathFinders.PathFinder;
 
 import java.util.List;
 
@@ -12,7 +14,7 @@ public class Simulation {
     private final ForestMap forestMap;
     private final List<WorldAction> initWorldActions;
     private final List<WorldAction> turnWorldActions;
-    private final BreadthPathFinder pathFinder;
+    private final PathFinder pathFinder;
     private final GameContext gameContext;
     private boolean running = false;
     private int turnCount;

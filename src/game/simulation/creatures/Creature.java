@@ -16,14 +16,20 @@ public abstract class Creature extends Entity {
     }
 
     public void makeMove(GameContext context) {
-        if (context.hasTarget(this)) {
-            if (context.isTargetClose(this)) {
-                context.devourEntity(this);
+        for (int step = 0; step < speed; step++) {
+            if (context.hasTarget(this)) {
+                if (context.isTargetClose(this)) {
+                    context.devourEntity(this);
+                    break;
+                }
+                boolean moved = context.moveTowardsTarget(this);
+                if (!moved) {
+                    break;
+                }
             } else {
-                context.moveTowardsTarget(this);
+                context.randomMove(this);
+                break;
             }
-        } else {
-            context.randomMove(this);
         }
     }
 
@@ -35,5 +41,8 @@ public abstract class Creature extends Entity {
 
     public abstract boolean isFood(Entity entity);
 
-    public abstract int getHealth();
+    public int getHealth() {
+        System.out.println(this + " health is " + health);
+        return health;
+    }
 }

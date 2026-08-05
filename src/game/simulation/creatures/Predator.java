@@ -4,14 +4,10 @@ import game.simulation.Entity;
 import game.simulation.GameContext;
 
 public class Predator extends Creature {
-    private int speed;
-    private int health;
     private int attack;
 
     public Predator(int speed, int health, int attack) {
         super(speed, health);
-        this.speed = speed;
-        this.health = health;
         this.attack = attack;
     }
 
@@ -20,21 +16,17 @@ public class Predator extends Creature {
         if (!isFood(target)) {
             return;
         }
-        if (((Creature) target).getHealth() > 0) {
+        if (target instanceof Creature) {
             ((Creature) target).takeDamage(attack);
-            return;
+            if (((Creature) target).getHealth() <= 0) {
+                context.consume(this, target);
+            }
         }
-        context.consume(this, target);
     }
 
     @Override
     public boolean isFood(Entity entity) {
         return entity instanceof Herbivore;
-    }
-
-    @Override
-    public int getHealth() {
-        return health;
     }
 
     @Override
