@@ -5,46 +5,55 @@ import game.simulation.GameContext;
 import game.simulation.creatures.Creature;
 import game.simulation.creatures.Herbivore;
 import game.simulation.creatures.Predator;
+import game.simulation.fieldObjects.FieldObject;
 import game.simulation.fieldObjects.Grass;
 import game.simulation.fieldObjects.Rock;
 import game.simulation.fieldObjects.Tree;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class InitializeWorldAction implements WorldAction {
     private static final int MAP_SIZE = 10;
     private final Random random = new Random();
+    private final List<Creature> creatures = List.of(
+            new Herbivore(1, 50),
+            new Herbivore(1, 50),
+            new Herbivore(1, 50),
+            new Predator(2, 100, 35),
+            new Predator(2, 100, 35)
+    );
 
     @Override
     public void execute(GameContext gameContext) {
-        List<Creature> creatures = new ArrayList<>();
-        creatures.add(new Herbivore(1, 50));
-        creatures.add(new Herbivore(1, 50));
-        creatures.add(new Herbivore(1, 50));
-        creatures.add(new Herbivore(1, 50));
-        creatures.add(new Predator(2, 100, 35));
-        creatures.add(new Predator(2, 100, 35));
+        placeFieldObjects(gameContext);
+        placeCreatures(gameContext);
+    }
 
-        for (int i = 1; i <= MAP_SIZE; i++) {
-            for (int j = 1; j <= MAP_SIZE; j++) {
-                Coordinates coordinates = new Coordinates(i, j);
-                int rndm = random.nextInt(MAP_SIZE);
-                if (rndm == 0) {
-                    gameContext.addEntity(new Rock(), coordinates);
-                } else if (rndm == 1) {
-                    gameContext.addEntity(new Tree(), coordinates);
-                } else if (rndm == 2) {
-                    gameContext.addEntity(new Grass(), coordinates);
-                }
+    private void placeCreatures(GameContext gameContext) {
+        for (Creature creature : creatures) {
+            Coordinates coordinates = gameContext.getEmptyCell();
+            gameContext.addEntity(creature, coordinates);
+        }
+    }
+
+    private void placeFieldObjects(GameContext gameContext) {
+        for (int i = 0; i < MAP_SIZE * MAP_SIZE; i++) {
+            Coordinates coordinates = gameContext.getEmptyCell();
+            FieldObject object = getFieldObject();
+            if (object != null) {
+                gameContext.addEntity(object, coordinates);
             }
         }
+    }
 
-        for (Creature creature : creatures) {
-            int x = random.nextInt(1, MAP_SIZE);
-            int y = random.nextInt(1, MAP_SIZE);
-            gameContext.addEntity(creature, new Coordinates(x, y));
-        }
+    private FieldObject getFieldObject() {
+        int rndm = random.nextInt(MAP_SIZE);
+        return switch (rndm) {
+            case 0 -> new Rock();
+            case 1 -> new Tree();
+            case 2 -> new Grass();
+            default -> null;
+        };
     }
 }

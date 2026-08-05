@@ -21,7 +21,9 @@ public class MoveAnimalsAction implements WorldAction {
             if (gameContext.getCoordinates(creature) == null) {
                 continue;
             }
-            creature.makeMove(gameContext);
+            if (creature.isAlive()) {
+                creature.makeMove(gameContext);
+            }
         }
     }
 }

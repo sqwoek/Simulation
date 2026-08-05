@@ -21,7 +21,7 @@ public class Predator extends Creature {
         }
 
         if (target instanceof Creature creature) {
-            if (creature.getHealth() > 0) {
+            if (creature.isAlive()) {
                 context.attack(this, creature, attack);
             } else {
                 context.consume(this, target);

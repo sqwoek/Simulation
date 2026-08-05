@@ -5,7 +5,6 @@ import game.simulation.creatures.Creature;
 import game.simulation.creatures.Herbivore;
 import game.simulation.creatures.Predator;
 import game.simulation.fieldObjects.Grass;
-import game.simulation.pathFinders.BreadthPathFinder;
 import game.simulation.pathFinders.PathFinder;
 
 import java.util.List;
@@ -54,7 +53,6 @@ public class GameContext {
     }
 
     public void randomMove(Creature creature) {
-        System.out.println(creature.toString() + getCoordinates(creature) + " want to random move");
         Coordinates coords = getCoordinates(creature);
         if (coords == null) {
             return;
@@ -66,7 +64,6 @@ public class GameContext {
             Coordinates next = directions.get(idx);
             if (canMove(creature, next)) {
                 map.moveEntityTo(creature, next);
-                System.out.println(creature + " random move to " + next);
                 return;
             }
         }
@@ -93,7 +90,7 @@ public class GameContext {
         map.placeEntity(coords, entity);
     }
 
-    public Coordinates findEmptyCell() {
+    public Coordinates getEmptyCell() {
         while (true) {
             int x = rndm.nextInt(map.getWidth()) + 1;
             int y = rndm.nextInt(map.getHeight()) + 1;
@@ -139,18 +136,10 @@ public class GameContext {
         Coordinates from = getCoordinates(creature);
         Coordinates target = getNearestTargetCoords(creature);
         if (from == null || target == null) {
-            //TODO: check this
-            if (from == null) {
-                System.out.println("Who i am?");
-            }
-            if (target == null) {
-                System.out.println("I have no target");
-            }
             return;
         }
         List<Coordinates> path = pathFinder.getPath(map, from, target);
         if (!path.isEmpty()) {
-            System.out.println(from + creature.toString() + " moving onto " + path.get(0));
             move(creature, path.get(0));
             return;
         }
@@ -193,7 +182,6 @@ public class GameContext {
     }
 
     public void attack(Creature attacker, Creature target, int damage) {
-        System.out.println(attacker.toString() + " " + getCoordinates(attacker) + " attacked " + target.toString() + " " + getCoordinates(target));
         target.takeDamage(damage);
     }
 
