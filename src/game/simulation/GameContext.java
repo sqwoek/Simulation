@@ -129,6 +129,7 @@ public class GameContext {
         }
         if (creature instanceof Herbivore && edible instanceof Grass) {
             map.removeEntity(targetCoords);
+            map.moveEntityTo(creature, targetCoords);
             System.out.println("Rabbit ate a grass! Rabbit's coords are " + map.getCurrentCoords(creature) + " Grass coords were "
                     + targetCoords);
         }

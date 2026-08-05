@@ -2,9 +2,7 @@ package game;
 
 import game.simulation.Coordinates;
 import game.simulation.Entity;
-import game.simulation.creatures.Creature;
 import game.simulation.creatures.Herbivore;
-import game.simulation.creatures.Predator;
 import game.simulation.fieldObjects.Grass;
 
 import java.util.*;
@@ -19,8 +17,12 @@ public class ForestMap {
 
     }
 
-    public void placeEntity(Coordinates coordinates, Entity entity) {
-        entities.put(coordinates, entity);
+    public void placeEntity(Coordinates coords, Entity entity) {
+        if (isWithinBorders(coords)) {
+            entities.put(coords, entity);
+        } else {
+            throw new RuntimeException("Invalid coordinate.");
+        }
     }
 
     public Entity getEntity(Coordinates coordinates) {
@@ -28,17 +30,25 @@ public class ForestMap {
     }
 
     public void moveEntityTo(Entity entity, Coordinates coords) {
-        Coordinates currentCoords = getCurrentCoords(entity);
-        entities.remove(currentCoords);
-        entities.put(coords, entity);
+        if (isWithinBorders(coords)) {
+            Coordinates currentCoords = getCurrentCoords(entity);
+            entities.remove(currentCoords);
+            entities.put(coords, entity);
+        } else {
+            throw new RuntimeException("Invalid coordinate.");
+        }
     }
 
-    public void removeEntity(Coordinates currentCoords) {
-        entities.remove(currentCoords);
+    public void removeEntity(Coordinates coords) {
+        if (isWithinBorders(coords)) {
+            entities.remove(coords);
+        } else {
+            throw new RuntimeException("Invalid coordinate.");
+        }
     }
 
-    public boolean isEmpty(Coordinates coordinates) {
-        return !entities.containsKey(coordinates);
+    public boolean isEmpty(Coordinates coords) {
+        return !entities.containsKey(coords);
     }
 
     public Map<Coordinates, Entity> getMap() {
@@ -56,56 +66,6 @@ public class ForestMap {
 
     public boolean isWithinBorders(Coordinates coords) {
         return coords.getX() > 0 && coords.getX() <= MAP_WIDTH && coords.getY() > 0 && coords.getY() <= MAP_HEIGHT;
-    }
-
-    public Coordinates getNearestTargetCords(Creature creature, Class<? extends Entity> target) {
-        Coordinates currentCoords = getCurrentCoords(creature);
-        if (currentCoords == null) {
-            return null;
-        }
-        Coordinates nearest = null;
-        int minDistance = Integer.MAX_VALUE;
-        for (Map.Entry<Coordinates, Entity> entry : entities.entrySet()) {
-            Entity entity = entry.getValue();
-            if (target.isInstance(entity)) {
-                Coordinates cord = entry.getKey();
-                int distance = Math.abs(cord.getX() - currentCoords.getX()) +
-                        Math.abs(cord.getY() - currentCoords.getY());
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    nearest = cord;
-                }
-            }
-        }
-        return nearest;
-    }
-
-    public boolean isSquareGoodForMove(Creature creature, Coordinates target) {
-        if (target.getX() <= 0 || target.getX() > MAP_WIDTH ||
-                target.getY() <= 0 || target.getY() > MAP_HEIGHT) {
-            return false;
-        }
-        Entity entity = entities.get(target);
-        if (entity == null) {
-            return true;
-        }
-        if (creature instanceof Herbivore && entity instanceof Grass) {
-            return true;
-        }
-        if (creature instanceof Predator && entity instanceof Herbivore) {
-            return true;
-        }
-        return false;
-    }
-
-    public boolean isTargetClose(Creature creature, Coordinates targetCoords) {
-        Coordinates currentCoords = getCurrentCoords(creature);
-        if (currentCoords == null) {
-            throw new RuntimeException();
-        }
-        int dx = Math.abs(currentCoords.getX() - targetCoords.getX());
-        int dy = Math.abs(currentCoords.getY() - targetCoords.getY());
-        return (dx + dy) == 1;
     }
 
     public void addGrass() {
@@ -140,9 +100,5 @@ public class ForestMap {
 
     public int getHeight() {
         return MAP_HEIGHT;
-    }
-
-    public Map<Coordinates, Entity> getAllEntities() {
-        return Map.copyOf(entities);
     }
 }
