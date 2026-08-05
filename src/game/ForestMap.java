@@ -29,8 +29,10 @@ public class ForestMap {
     public void moveEntityTo(Entity entity, Coordinates coords) {
         if (isWithinBorders(coords)) {
             Coordinates currentCoords = getCurrentCoords(entity);
-            entities.remove(currentCoords);
-            entities.put(coords, entity);
+            removeEntity(currentCoords);
+            placeEntity(coords, entity);
+//            entities.remove(currentCoords);
+//            entities.put(coords, entity);
         } else {
             throw new RuntimeException("Invalid coordinate.");
         }

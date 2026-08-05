@@ -54,17 +54,12 @@ public class GameContext {
     }
 
     public void randomMove(Creature creature) {
-        System.out.println(creature + " want to random move");
-        Coordinates pos = getCoordinates(creature);
-        if (pos == null) {
+        System.out.println(creature.toString() + getCoordinates(creature) + " want to random move");
+        Coordinates coords = getCoordinates(creature);
+        if (coords == null) {
             return;
         }
-        List<Coordinates> directions = List.of(
-                pos.shift(1, 0),
-                pos.shift(-1, 0),
-                pos.shift(0, 1),
-                pos.shift(0, -1)
-        );
+        List<Coordinates> directions = getNeighboringCoordinates(coords);
         //TODO: get rid of randomizer
         for (int i = 0; i < 100; i++) {
             int idx = rndm.nextInt(directions.size());
@@ -140,7 +135,7 @@ public class GameContext {
         return false;
     }
 
-    public boolean moveTowardsTarget(Creature creature) {
+    public void moveTowardsTarget(Creature creature) {
         Coordinates from = getCoordinates(creature);
         Coordinates target = getNearestTargetCoords(creature);
         if (from == null || target == null) {
@@ -151,38 +146,25 @@ public class GameContext {
             if (target == null) {
                 System.out.println("I have no target");
             }
-            return false;
+            return;
         }
         List<Coordinates> path = pathFinder.getPath(map, from, target);
         if (!path.isEmpty()) {
             System.out.println(from + creature.toString() + " moving onto " + path.get(0));
             move(creature, path.get(0));
-            return true;
+            return;
         }
         randomMove(creature);
-        return false;
+        return;
     }
 
-    public boolean isTargetClose(Creature creature) {
+    public boolean isTargetClose(Creature creature, Entity target) {
         Coordinates coords = getCoordinates(creature);
-        Coordinates target = getNearestTargetCoords(creature);
-        if (coords == null || target == null) {
+        Coordinates targetCoords = getCoordinates(target);
+        if (coords == null || targetCoords == null) {
             return false;
         }
-        return Math.abs(coords.getX() - target.getX()) + Math.abs(coords.getY() - target.getY()) == 1;
-    }
-
-    public void devourEntity(Creature creature) {
-        Coordinates targetCoords = getNearestTargetCoords(creature);
-        if (targetCoords == null || !isTargetClose(creature)) {
-            return;
-        }
-        Entity target = map.getEntity(targetCoords);
-        if (target == null || !creature.isFood(target)) {
-            return;
-        }
-
-        creature.devourTarget(this, target);
+        return Math.abs(coords.getX() - targetCoords.getX()) + Math.abs(coords.getY() - targetCoords.getY()) == 1;
     }
 
     public void consume(Creature eater, Entity edible) {
@@ -192,5 +174,44 @@ public class GameContext {
         }
         map.removeEntity(targetCoords);
         map.moveEntityTo(eater, targetCoords);
+    }
+
+    public Entity getNeighbourFood(Creature creature) {
+        Coordinates coords = getCoordinates(creature);
+        if (coords == null) {
+            return null;
+        }
+
+        List<Coordinates> neighbors = getNeighboringCoordinates(coords);
+        for (Coordinates c : neighbors) {
+            Entity potentialFood = map.getEntity(c);
+            if (potentialFood != null && creature.isFood(potentialFood)) {
+                return potentialFood;
+            }
+        }
+        return null;
+    }
+
+    public void attack(Creature attacker, Creature target, int damage) {
+        System.out.println(attacker.toString() + " " + getCoordinates(attacker) + " attacked " + target.toString() + " " + getCoordinates(target));
+        target.takeDamage(damage);
+    }
+
+    private static List<Coordinates> getNeighboringCoordinates(Coordinates coords) {
+        return List.of(
+                coords.shift(1, 0),
+                coords.shift(-1, 0),
+                coords.shift(0, 1),
+                coords.shift(0, -1)
+        );
+    }
+
+    public void removeEntity(Entity target) {
+        Coordinates targetCoords = getCoordinates(target);
+        map.removeEntity(targetCoords);
+    }
+
+    public Map<Coordinates, Entity> getMap() {
+        return map.getMap();
     }
 }

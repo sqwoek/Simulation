@@ -16,24 +16,26 @@ public abstract class Creature extends Entity {
     }
 
     public void makeMove(GameContext context) {
+        if (health <= 0) {
+            System.out.println(context.getCoordinates(this) + "I can't move - I'm dead");
+            return;
+        }
         for (int step = 0; step < speed; step++) {
+            Entity neighborFood = context.getNeighbourFood(this);
+            if (neighborFood != null) {
+                devourTarget(context, neighborFood);
+                return;
+            }
             if (context.hasTarget(this)) {
-                if (context.isTargetClose(this)) {
-                    context.devourEntity(this);
-                    break;
-                }
-                boolean moved = context.moveTowardsTarget(this);
-                if (!moved) {
-                    break;
-                }
+                context.moveTowardsTarget(this);
             } else {
                 context.randomMove(this);
-                break;
             }
         }
     }
 
     public void takeDamage(int damage) {
+        System.out.println("Herbivore were attacked!");
         this.health = health - damage;
     }
 
@@ -42,7 +44,6 @@ public abstract class Creature extends Entity {
     public abstract boolean isFood(Entity entity);
 
     public int getHealth() {
-        System.out.println(this + " health is " + health);
         return health;
     }
 }

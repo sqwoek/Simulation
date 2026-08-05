@@ -16,9 +16,14 @@ public class Predator extends Creature {
         if (!isFood(target)) {
             return;
         }
-        if (target instanceof Creature) {
-            ((Creature) target).takeDamage(attack);
-            if (((Creature) target).getHealth() <= 0) {
+        if (!context.isTargetClose(this, target)) {
+            return;
+        }
+
+        if (target instanceof Creature creature) {
+            if (creature.getHealth() > 0) {
+                context.attack(this, creature, attack);
+            } else {
                 context.consume(this, target);
             }
         }
