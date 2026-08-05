@@ -16,31 +16,24 @@ public abstract class Creature extends Entity {
     }
 
     public void makeMove(GameContext context) {
-        Coordinates targetCoords = context.findNearestTarget(this);
-        if (targetCoords == null) {
-            context.randomMove(this);
-            return;
-        }
-        if (context.isTargetClose(this, targetCoords)) {
-            devourTarget(targetCoords, context);
-            return;
-        }
-        List<Coordinates> path = context.findPath(this, targetCoords);
-        if (!path.isEmpty()) {
-            System.out.println("I'm " + this + " gonna move to " + targetCoords);
-            context.move(this, path.get(0));
+        if (context.hasTarget(this)) {
+            if (context.isTargetClose(this)) {
+                context.devourEntity(this);
+            } else {
+                context.moveTowardsTarget(this);
+            }
         } else {
-            System.out.println(this + " " + context.getCoordinates(this) + ": Path is empty");
+            context.randomMove(this);
         }
     }
 
-    public void devourTarget(Coordinates targetCoords, GameContext context) {
-        context.devourEntity(this, targetCoords);
+    public void takeDamage(int damage) {
+        this.health = health - damage;
     }
+
+    public abstract void devourTarget(GameContext context, Entity target);
 
     public abstract boolean isFood(Entity entity);
-
-    public abstract int getSpeed();
 
     public abstract int getHealth();
 }

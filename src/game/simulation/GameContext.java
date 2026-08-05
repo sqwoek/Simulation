@@ -22,25 +22,23 @@ public class GameContext {
         this.pathFinder = pathFinder;
     }
 
-    public Coordinates getCoordinates(Entity entity) {
-        return map.getCurrentCoords(entity);
+    public void move(Creature creature, Coordinates coordinates) {
+        if (canMove(creature, coordinates)) {
+            map.moveEntityTo(creature, coordinates);
+        } else {
+            randomMove(creature);
+        }
     }
 
-    public List<Coordinates> findPath(Creature creature, Coordinates to) {
-        Coordinates from = map.getCurrentCoords(creature);
-        return pathFinder.findPath(map, from, to);
-    }
-
-    public boolean canMove(Creature creature, Coordinates target) {
-        if (!map.isWithinBorders(target)) {
+    public boolean canMove(Creature creature, Coordinates targetCoords) {
+        if (!map.isWithinBorders(targetCoords)) {
             return false;
         }
-        if (map.isEmpty(target)) {
+        if (map.isEmpty(targetCoords)) {
             return true;
         }
-        Entity entity = map.getEntity(target);
-
-        return isEdibleFor(entity, creature);
+        Entity target = map.getEntity(targetCoords);
+        return creature.isFood(target);
     }
 
     public boolean isEdibleFor(Entity entity, Creature creature) {
@@ -51,40 +49,6 @@ public class GameContext {
             return true;
         }
         return false;
-    }
-
-    public Coordinates findNearestTarget(Creature creature) {
-        Coordinates coords = getCoordinates(creature);
-        if (coords == null) {
-            return null;
-        }
-
-        Class<? extends Entity> targetType = null;
-        if (creature instanceof Herbivore) {
-            targetType = Grass.class;
-        }
-        if (creature instanceof Predator) {
-            targetType = Herbivore.class;
-        }
-
-        if (targetType == null) {
-            throw new RuntimeException("Couldn't find target for entity: " + creature.getClass());
-        }
-
-        Coordinates nearest = null;
-        int minDistance = Integer.MAX_VALUE;
-
-        for (Map.Entry<Coordinates, Entity> entry : map.getMap().entrySet()) {
-            if (targetType.isInstance(entry.getValue())) {
-                int distance = Math.abs(coords.getX() - entry.getKey().getX()) +
-                        Math.abs(coords.getY() - entry.getKey().getY());
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    nearest = entry.getKey();
-                }
-            }
-        }
-        return nearest;
     }
 
     public void randomMove(Creature creature) {
@@ -111,34 +75,8 @@ public class GameContext {
         }
     }
 
-    public boolean isTargetClose(Creature creature, Coordinates target) {
-        Coordinates myPos = getCoordinates(creature);
-        return Math.abs(myPos.getX() - target.getX()) + Math.abs(myPos.getY() - target.getY()) == 1;
-    }
-
-    public void move(Creature creature, Coordinates coordinates) {
-        if (canMove(creature, coordinates)) {
-            map.moveEntityTo(creature, coordinates);
-        } else  {
-            randomMove(creature);
-        }
-    }
-
-    public void devourEntity(Creature creature, Coordinates targetCoords) {
-        Entity edible = map.getEntity(targetCoords);
-        if (creature instanceof Predator && edible instanceof Herbivore) {
-            ((Herbivore) edible).takeDamage(((Predator) creature).getAttack());
-            if (((Herbivore) edible).getHealth() <= 0) {
-                map.removeEntity(targetCoords);
-                map.moveEntityTo(creature, targetCoords);
-            }
-        }
-        if (creature instanceof Herbivore && edible instanceof Grass) {
-            map.removeEntity(targetCoords);
-            map.moveEntityTo(creature, targetCoords);
-            System.out.println("Rabbit ate a grass! Rabbit's coords are " + map.getCurrentCoords(creature) + " Grass coords were "
-                    + targetCoords);
-        }
+    public Coordinates getCoordinates(Entity entity) {
+        return map.getCurrentCoords(entity);
     }
 
     public boolean needAddEntity(Entity entity) {
@@ -169,7 +107,86 @@ public class GameContext {
         }
     }
 
-    public Map<Coordinates, Entity> getMap() {
-        return map.getMap();
+    public Coordinates getNearestTargetCoords(Creature creature) {
+        Coordinates coords = getCoordinates(creature);
+        if (coords == null) {
+            return null;
+        }
+        Coordinates nearest = null;
+        int minDistance = Integer.MAX_VALUE;
+
+        for (Map.Entry<Coordinates, Entity> entry : map.getMap().entrySet()) {
+            Entity possibleTarget = entry.getValue();
+            if (!creature.isFood(possibleTarget)) {
+                continue;
+            }
+
+            int distance = Math.abs(coords.getX() - entry.getKey().getX()) +
+                    Math.abs(coords.getY() - entry.getKey().getY());
+            if (distance < minDistance) {
+                minDistance = distance;
+                nearest = entry.getKey();
+            }
+        }
+        return nearest;
+    }
+
+    public void removeEntity(Entity entity) {
+        Coordinates targetCoords = getCoordinates(entity);
+        map.removeEntity(targetCoords);
+    }
+
+    public boolean hasTarget(Creature creature) {
+        if (getNearestTargetCoords(creature) != null) {
+            return true;
+        }
+        return false;
+    }
+
+    public void moveTowardsTarget(Creature creature) {
+        Coordinates from = getCoordinates(creature);
+        Coordinates target = getNearestTargetCoords(creature);
+        if (from == null || target == null) {
+            //TODO: check this
+            if (from == null) {
+                System.out.println("Who i am?");
+            }
+            if (target == null) {
+                System.out.println("I have no target");
+            }
+            return;
+        }
+        List<Coordinates> path = pathFinder.getPath(map, from, target);
+        if (!path.isEmpty()) {
+            move(creature, path.get(0));
+        } else {
+            System.out.println("Random move");
+            randomMove(creature);
+        }
+    }
+
+    public boolean isTargetClose(Creature creature) {
+        Coordinates coords = getCoordinates(creature);
+        Coordinates target = getNearestTargetCoords(creature);
+        return Math.abs(coords.getX() - target.getX()) + Math.abs(coords.getY() - target.getY()) == 1;
+    }
+
+    public void devourEntity(Creature creature) {
+        Coordinates targetCoords = getNearestTargetCoords(creature);
+        if (targetCoords == null || !isTargetClose(creature)) {
+            return;
+        }
+        Entity target = map.getEntity(targetCoords);
+        if (target == null || !creature.isFood(target)) {
+            return;
+        }
+
+        creature.devourTarget(this, target);
+    }
+
+    public void consume(Creature eater, Entity edible) {
+        Coordinates targetCoords = getCoordinates(edible);
+        removeEntity(edible);
+        move(eater, targetCoords);
     }
 }

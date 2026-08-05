@@ -1,6 +1,7 @@
 package game.simulation.creatures;
 
 import game.simulation.Entity;
+import game.simulation.GameContext;
 import game.simulation.fieldObjects.Grass;
 
 public class Herbivore extends Creature {
@@ -13,8 +14,12 @@ public class Herbivore extends Creature {
         this.health = health;
     }
 
-    public void takeDamage(int damage) {
-        this.health = health - damage;
+    @Override
+    public void devourTarget(GameContext context, Entity target) {
+        if (isFood(target)) {
+            return;
+        }
+        context.consume(this, target);
     }
 
     @Override
@@ -22,9 +27,8 @@ public class Herbivore extends Creature {
         return entity instanceof Grass;
     }
 
-    @Override
-    public int getSpeed() {
-        return speed;
+    public void takeDamage(int damage) {
+        this.health = health - damage;
     }
 
     @Override

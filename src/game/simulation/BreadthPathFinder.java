@@ -12,7 +12,7 @@ public class BreadthPathFinder {
             new Coordinates(0, -1)
     );
 
-    public List<Coordinates> findPath(ForestMap map, Coordinates from, Coordinates to) {
+    public List<Coordinates> getPath(ForestMap map, Coordinates from, Coordinates to) {
         if (from.equals(to)) {
             return Collections.emptyList();
         }
