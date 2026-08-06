@@ -9,6 +9,7 @@ import game.simulation.fieldObjects.FieldObject;
 import game.simulation.fieldObjects.Grass;
 import game.simulation.fieldObjects.Rock;
 import game.simulation.fieldObjects.Tree;
+import game.simulation.factory.EntityFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +64,7 @@ public class InitializeWorldAction implements WorldAction {
             case 0 -> entityFactory.create(Rock.class);
             case 1 -> entityFactory.create(Tree.class);
             case 2 -> entityFactory.create(Grass.class);
+            default -> null;
         };
     }
 }

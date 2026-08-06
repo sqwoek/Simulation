@@ -17,6 +17,7 @@ public class Simulation {
     private final GameContext gameContext;
     private final Object lock = new Object();
     private volatile boolean running = true;
+    private volatile boolean isPaused = false;
     private int turnCount;
 
     public Simulation() {
@@ -38,15 +39,19 @@ public class Simulation {
         for (WorldAction initWorldAction : initWorldActions) {
             initWorldAction.execute(gameContext);
         }
-        while (true) {
+        while (running) {
             synchronized (lock) {
-                while (!running) {
+                while (isPaused) {
                     try {
                         lock.wait();
                     } catch (InterruptedException ex) {
-                        throw new RuntimeException(ex);
+                        Thread.currentThread().interrupt();
+                        return;
                     }
                 }
+            }
+            if (!running) {
+                return;
             }
             nextTurn();
             MapRenderer.printMap(forestMap);
@@ -63,15 +68,23 @@ public class Simulation {
         }
     }
 
-    public void pauseSimulation() {
+    public void stopSimulation() {
         synchronized (lock) {
             running = false;
+            isPaused = false;
+            lock.notifyAll();
+        }
+    }
+
+    public void pauseSimulation() {
+        synchronized (lock) {
+            isPaused = true;
         }
     }
 
     public void resumeSimulation() {
         synchronized (lock) {
-            running = true;
+            isPaused = false;
             lock.notifyAll();
         }
     }
