@@ -27,7 +27,7 @@ public class AddEntityAction implements Action {
         }
     }
 
-    public boolean needAddEntity(SimulationContext simulationContext, Entity entity) {
+    private boolean needAddEntity(SimulationContext simulationContext, Entity entity) {
         long count = simulationContext.getEntityTypeCount(entity);
 
         if (entity instanceof Grass) {

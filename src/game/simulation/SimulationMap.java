@@ -6,9 +6,14 @@ import game.simulation.exceptions.InvalidCoordinateException;
 import java.util.*;
 
 public class SimulationMap {
-    private static final int WIDTH = 10;
-    private static final int HEIGHT = 10;
+    private final int width;
+    private final int height;
     private final Map<Coordinates, Entity> entities = new HashMap<>();
+
+    public SimulationMap(int width, int height) {
+        this.width = width;
+        this.height = height;
+    }
 
     public void placeEntity(Coordinates coordinates, Entity entity) {
         validate(coordinates);
@@ -25,6 +30,7 @@ public class SimulationMap {
     }
 
     public boolean isEmpty(Coordinates coordinates) {
+        validate(coordinates);
         return !entities.containsKey(coordinates);
     }
 
@@ -38,8 +44,8 @@ public class SimulationMap {
     }
 
     public boolean isWithinBorders(Coordinates coordinates) {
-        return coordinates.x() > 0 && coordinates.x() <= WIDTH &&
-                coordinates.y() > 0 && coordinates.y() <= HEIGHT;
+        return coordinates.x() > 0 && coordinates.x() <= width &&
+                coordinates.y() > 0 && coordinates.y() <= height;
     }
 
     public void validate(Coordinates coordinates) {
@@ -53,10 +59,10 @@ public class SimulationMap {
     }
 
     public int getWidth() {
-        return WIDTH;
+        return width;
     }
 
     public int getHeight() {
-        return HEIGHT;
+        return height;
     }
 }

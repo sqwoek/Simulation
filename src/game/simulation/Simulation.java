@@ -9,7 +9,7 @@ import game.simulation.pathFinders.PathFinder;
 import java.util.List;
 
 public class Simulation {
-    private final SimulationMap forestMap;
+    private final SimulationMap simulationMap;
     private final List<Action> initWorldActions;
     private final List<Action> turnWorldActions;
     private final SimulationContext gameContext;
@@ -19,11 +19,11 @@ public class Simulation {
     private int turnCount;
 
     public Simulation() {
-        this.forestMap = new SimulationMap();
+        this.simulationMap = new SimulationMap(10, 10);
         this.turnCount = 0;
         PathFinder pathFinder = new BreadthPathFinder();
         this.initWorldActions = InitActionsFactory.createActions();
-        this.gameContext = new SimulationContext(forestMap, pathFinder);
+        this.gameContext = new SimulationContext(simulationMap, pathFinder);
         this.turnWorldActions = TurnActionsFactory.createActions();
     }
 
@@ -52,7 +52,7 @@ public class Simulation {
                 return;
             }
             nextTurn();
-            MapRenderer.printMap(forestMap);
+            MapRenderer.printMap(simulationMap);
             turnCount++;
             delayBetweenTurns();
         }

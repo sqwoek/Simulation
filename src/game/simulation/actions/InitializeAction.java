@@ -13,6 +13,7 @@ import game.simulation.factory.EntityFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 public class InitializeAction implements Action {
@@ -55,20 +56,20 @@ public class InitializeAction implements Action {
         int fieldObjectsCount = (MAP_SIZE * MAP_SIZE);
         for (int i = 1; i <= fieldObjectsCount; i++) {
             Coordinates coordinates = simulationContext.getEmptyCell();
-            FieldObject object = getFieldObject();
-            if (object != null) {
-                simulationContext.addEntity(object, coordinates);
+            Optional<FieldObject> objectOpt = getFieldObject();
+            if (objectOpt.isPresent()) {
+                simulationContext.addEntity(objectOpt.get(), coordinates);
             }
         }
     }
 
-    private FieldObject getFieldObject() {
+    private Optional<FieldObject> getFieldObject() {
         int chanceRoll = random.nextInt(SPAWN_RANGE);
-        return (FieldObject) switch (chanceRoll) {
+        return Optional.ofNullable((FieldObject) switch (chanceRoll) {
             case ROCK_INDEX -> entityFactory.create(Rock.class);
             case TREE_INDEX -> entityFactory.create(Tree.class);
             case GRASS_INDEX -> entityFactory.create(Grass.class);
             default -> null;
-        };
+        });
     }
 }
