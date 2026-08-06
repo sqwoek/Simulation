@@ -4,7 +4,7 @@ import game.simulation.Entity;
 import game.simulation.GameContext;
 
 public abstract class Creature extends Entity {
-    private int speed;
+    private final int speed;
     private int health;
 
     public Creature(int speed, int health) {
@@ -32,7 +32,7 @@ public abstract class Creature extends Entity {
     }
 
     public boolean isAlive() {
-        return getHealth() > 0;
+        return health > 0;
     }
 
     public abstract void devourTarget(GameContext context, Entity target);

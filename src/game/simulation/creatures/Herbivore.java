@@ -22,9 +22,4 @@ public class Herbivore extends Creature {
     public boolean isFood(Entity entity) {
         return entity instanceof Grass;
     }
-
-    @Override
-    public String toString() {
-        return "Herbivore";
-    }
 }

@@ -12,14 +12,10 @@ import java.util.List;
 
 public class TurnActionsFactory {
     public static List<WorldAction> createActions() {
-        EntityFactory entityFactory = EntityFactory.getInstance();
         List<WorldAction> worldActions = new ArrayList<>();
 
-        Entity grass = entityFactory.create(Grass.class);
-        Entity herbivore = entityFactory.create(Herbivore.class);
-
-        worldActions.add(new AddEntityWorldAction(grass));
-        worldActions.add(new AddEntityWorldAction(herbivore));
+        worldActions.add(new AddEntityWorldAction(Grass.class));
+        worldActions.add(new AddEntityWorldAction(Herbivore.class));
 
         worldActions.add(new MoveAnimalsAction());
         return worldActions;

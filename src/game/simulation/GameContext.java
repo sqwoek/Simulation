@@ -182,6 +182,7 @@ public class GameContext {
     }
 
     public void attack(Creature attacker, Creature target, int damage) {
+        System.out.println(attacker + " " + getCoordinates(attacker) + " attacked " + getCoordinates(target));
         target.takeDamage(damage);
     }
 

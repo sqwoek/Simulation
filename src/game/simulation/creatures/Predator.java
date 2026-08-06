@@ -4,7 +4,7 @@ import game.simulation.Entity;
 import game.simulation.GameContext;
 
 public class Predator extends Creature {
-    private int attack;
+    private final int attack;
 
     public Predator(int speed, int health, int attack) {
         super(speed, health);
@@ -13,29 +13,25 @@ public class Predator extends Creature {
 
     @Override
     public void devourTarget(GameContext context, Entity target) {
-        if (!isFood(target)) {
+        if (!canInteract(context, target)) {
             return;
         }
-        if (!context.isTargetClose(this, target)) {
-            return;
+        if (target instanceof Creature creature && creature.isAlive()) {
+            context.attack(this, creature, attack);
+        } else {
+            context.consume(this, target);
         }
+    }
 
-        if (target instanceof Creature creature) {
-            if (creature.isAlive()) {
-                context.attack(this, creature, attack);
-            } else {
-                context.consume(this, target);
-            }
+    private boolean canInteract(GameContext context, Entity target) {
+        if (!isFood(target)) {
+            return false;
         }
+        return context.isTargetClose(this, target);
     }
 
     @Override
     public boolean isFood(Entity entity) {
         return entity instanceof Herbivore;
-    }
-
-    @Override
-    public String toString() {
-        return "Predator";
     }
 }
