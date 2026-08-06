@@ -33,7 +33,7 @@ public class BreadthPathFinder implements PathFinder{
                 return buildPath(cameFrom, from, to);
             }
             for (Coordinates dir : DIRECTIONS) {
-                Coordinates next = current.shift(dir.getX(), dir.getY());
+                Coordinates next = current.shift(dir.x(), dir.y());
                 if (!map.isWithinBorders(next)) {
                     continue;
                 }

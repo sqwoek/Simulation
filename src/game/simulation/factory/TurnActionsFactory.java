@@ -1,5 +1,6 @@
 package game.simulation.factory;
 
+import game.simulation.Entity;
 import game.simulation.actions.AddEntityWorldAction;
 import game.simulation.actions.WorldAction;
 import game.simulation.actions.MoveAnimalsAction;
@@ -11,9 +12,15 @@ import java.util.List;
 
 public class TurnActionsFactory {
     public static List<WorldAction> createActions() {
+        EntityFactory entityFactory = EntityFactory.getInstance();
         List<WorldAction> worldActions = new ArrayList<>();
-        worldActions.add(new AddEntityWorldAction(new Grass()));
-        worldActions.add(new AddEntityWorldAction(new Herbivore(1, 50)));
+
+        Entity grass = entityFactory.create(Grass.class);
+        Entity herbivore = entityFactory.create(Herbivore.class);
+
+        worldActions.add(new AddEntityWorldAction(grass));
+        worldActions.add(new AddEntityWorldAction(herbivore));
+
         worldActions.add(new MoveAnimalsAction());
         return worldActions;
     }

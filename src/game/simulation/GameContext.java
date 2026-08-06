@@ -115,8 +115,8 @@ public class GameContext {
                 continue;
             }
 
-            int distance = Math.abs(coords.getX() - entry.getKey().getX()) +
-                    Math.abs(coords.getY() - entry.getKey().getY());
+            int distance = Math.abs(coords.x() - entry.getKey().x()) +
+                    Math.abs(coords.y() - entry.getKey().y());
             if (distance < minDistance) {
                 minDistance = distance;
                 nearest = entry.getKey();
@@ -153,7 +153,7 @@ public class GameContext {
         if (coords == null || targetCoords == null) {
             return false;
         }
-        return Math.abs(coords.getX() - targetCoords.getX()) + Math.abs(coords.getY() - targetCoords.getY()) == 1;
+        return Math.abs(coords.x() - targetCoords.x()) + Math.abs(coords.y() - targetCoords.y()) == 1;
     }
 
     public void consume(Creature eater, Entity edible) {

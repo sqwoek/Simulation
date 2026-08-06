@@ -17,12 +17,7 @@ public class AddEntityWorldAction implements WorldAction {
     public void execute(GameContext gameContext) {
         if (gameContext.needAddEntity(entityInstance)) {
             Coordinates coords = gameContext.getEmptyCell();
-            if (entityInstance instanceof Grass) {
-                gameContext.addEntity(new Grass(), coords);
-            }
-            if (entityInstance instanceof Herbivore) {
-                gameContext.addEntity(new Herbivore(1, 50), coords);
-            }
+            gameContext.addEntity(entityInstance, coords);
         }
     }
 }

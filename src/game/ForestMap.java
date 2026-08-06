@@ -64,7 +64,7 @@ public class ForestMap {
     }
 
     public boolean isWithinBorders(Coordinates coords) {
-        return coords.getX() > 0 && coords.getX() <= MAP_WIDTH && coords.getY() > 0 && coords.getY() <= MAP_HEIGHT;
+        return coords.x() > 0 && coords.x() <= MAP_WIDTH && coords.y() > 0 && coords.y() <= MAP_HEIGHT;
     }
 
     public int getWidth() {
