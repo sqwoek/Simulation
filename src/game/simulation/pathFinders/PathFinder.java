@@ -1,10 +1,10 @@
 package game.simulation.pathFinders;
 
-import game.ForestMap;
+import game.simulation.SimulationMap;
 import game.simulation.Coordinates;
 
 import java.util.List;
 
 public interface PathFinder {
-    List<Coordinates> getPath(ForestMap map, Coordinates from, Coordinates to);
+    List<Coordinates> getPath(SimulationMap map, Coordinates from, Coordinates to);
 }

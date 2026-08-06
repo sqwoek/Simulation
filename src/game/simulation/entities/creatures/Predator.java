@@ -1,7 +1,7 @@
-package game.simulation.creatures;
+package game.simulation.entities.creatures;
 
-import game.simulation.Entity;
-import game.simulation.GameContext;
+import game.simulation.entities.Entity;
+import game.simulation.SimulationContext;
 
 public class Predator extends Creature {
     private final int attack;
@@ -12,7 +12,7 @@ public class Predator extends Creature {
     }
 
     @Override
-    public void devourTarget(GameContext context, Entity target) {
+    public void devourTarget(SimulationContext context, Entity target) {
         if (!canInteract(context, target)) {
             return;
         }
@@ -23,7 +23,7 @@ public class Predator extends Creature {
         }
     }
 
-    private boolean canInteract(GameContext context, Entity target) {
+    private boolean canInteract(SimulationContext context, Entity target) {
         if (!isFood(target)) {
             return false;
         }

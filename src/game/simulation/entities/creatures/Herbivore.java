@@ -1,8 +1,8 @@
-package game.simulation.creatures;
+package game.simulation.entities.creatures;
 
-import game.simulation.Entity;
-import game.simulation.GameContext;
-import game.simulation.fieldObjects.Grass;
+import game.simulation.entities.Entity;
+import game.simulation.SimulationContext;
+import game.simulation.entities.fieldObjects.Grass;
 
 public class Herbivore extends Creature {
 
@@ -11,7 +11,7 @@ public class Herbivore extends Creature {
     }
 
     @Override
-    public void devourTarget(GameContext context, Entity target) {
+    public void devourTarget(SimulationContext context, Entity target) {
         if (!isFood(target)) {
             return;
         }

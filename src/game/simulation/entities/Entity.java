@@ -1,4 +1,4 @@
-package game.simulation;
+package game.simulation.entities;
 
 public abstract class Entity {
 }

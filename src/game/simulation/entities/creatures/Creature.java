@@ -1,7 +1,9 @@
-package game.simulation.creatures;
+package game.simulation.entities.creatures;
 
-import game.simulation.Entity;
-import game.simulation.GameContext;
+import game.simulation.entities.Entity;
+import game.simulation.SimulationContext;
+
+import java.util.Optional;
 
 public abstract class Creature extends Entity {
     private final int speed;
@@ -12,11 +14,11 @@ public abstract class Creature extends Entity {
         this.health = health;
     }
 
-    public void makeMove(GameContext context) {
+    public void makeMove(SimulationContext context) {
         for (int step = 0; step < speed; step++) {
-            Entity neighborFood = context.getNeighbourFood(this);
-            if (neighborFood != null) {
-                devourTarget(context, neighborFood);
+            Optional<Entity> neighborFood = context.getNeighbourFood(this);
+            if (neighborFood.isPresent()) {
+                devourTarget(context, neighborFood.get());
                 return;
             }
             if (context.hasTarget(this)) {
@@ -35,7 +37,7 @@ public abstract class Creature extends Entity {
         return health > 0;
     }
 
-    public abstract void devourTarget(GameContext context, Entity target);
+    public abstract void devourTarget(SimulationContext context, Entity target);
 
     public abstract boolean isFood(Entity entity);
 

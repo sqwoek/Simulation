@@ -1,18 +1,17 @@
-package game;
+package game.simulation;
 
-import game.simulation.Simulation;
 import game.simulation.dialog.Dialog;
 import game.simulation.dialog.StringSelectDialog;
 
 import java.util.List;
 import java.util.Scanner;
 
-public class Main {
+public class SimulationLauncher {
     private static final String START_COMMAND = "START";
     private static final String PAUSE_COMMAND = "PAUSE";
     private static final String RESUME_COMMAND = "RESUME";
     private static final String EXIT_COMMAND = "EXIT";
-    private static final String PAUSE_MESSAGE = "Simulation is stopped.";
+    private static final String PAUSE_MESSAGE = "Simulation is paused.";
     private static final String RESUME_MESSAGE = "Simulation is running again.";
     private static final String EXIT_MESSAGE = "Termination of Simulation...";
 

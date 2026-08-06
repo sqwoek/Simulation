@@ -1,11 +1,11 @@
 package game.simulation.factory;
 
-import game.simulation.Entity;
-import game.simulation.creatures.Herbivore;
-import game.simulation.creatures.Predator;
-import game.simulation.fieldObjects.Grass;
-import game.simulation.fieldObjects.Rock;
-import game.simulation.fieldObjects.Tree;
+import game.simulation.entities.Entity;
+import game.simulation.entities.creatures.Herbivore;
+import game.simulation.entities.creatures.Predator;
+import game.simulation.entities.fieldObjects.Grass;
+import game.simulation.entities.fieldObjects.Rock;
+import game.simulation.entities.fieldObjects.Tree;
 
 public class EntityFactory {
     private final static int HERBIVORE_SPEED = 1;
