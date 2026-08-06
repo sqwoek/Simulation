@@ -7,22 +7,24 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Simulation simulation = new Simulation();
-        simulation.startSimulation();
-//        Thread simulationThread = new Thread(simulation::startSimulation);
-//        simulationThread.start();
-//
-//        Scanner scanner = new Scanner(System.in);
-//        while (true) {
-//            System.out.println();
-//            System.out.println("Press P to pause the simulation or S to resume simulation.");
-//
-//            String line = scanner.nextLine();
-//            if (line.equals("P")) {
-//                simulation.pauseSimulation();
-//            }
-//            if (line.equals("S")) {
-//                simulation.resumeSimulation();
-//            }
-//        }
+        Thread simulationThread = new Thread(simulation::startSimulation);
+
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            System.out.println();
+            System.out.println("Press A to start the simulation");
+            System.out.println("Press P to pause the simulation or S to resume simulation.");
+
+            String line = scanner.nextLine();
+            if (line.equals("A") && !simulationThread.isAlive()) {
+                simulationThread.start();
+            }
+            if (line.equals("P")) {
+                simulation.pauseSimulation();
+            }
+            if (line.equals("S")) {
+                simulation.resumeSimulation();
+            }
+        }
     }
 }

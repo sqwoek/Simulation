@@ -14,15 +14,15 @@ public class Simulation {
     private final ForestMap forestMap;
     private final List<WorldAction> initWorldActions;
     private final List<WorldAction> turnWorldActions;
-    private final PathFinder pathFinder;
     private final GameContext gameContext;
-    private boolean running = false;
+    private final Object lock = new Object();
+    private volatile boolean running = true;
     private int turnCount;
 
     public Simulation() {
         this.forestMap = new ForestMap();
         this.turnCount = 0;
-        this.pathFinder = new BreadthPathFinder();
+        PathFinder pathFinder = new BreadthPathFinder();
         this.initWorldActions = InitActionsFactory.createActions();
         this.gameContext = new GameContext(forestMap, pathFinder);
         this.turnWorldActions = TurnActionsFactory.createActions();
@@ -38,26 +38,42 @@ public class Simulation {
         for (WorldAction initWorldAction : initWorldActions) {
             initWorldAction.execute(gameContext);
         }
-        MapRenderer.printMap(forestMap);
-        running = true;
-        while (running) {
+        while (true) {
+            synchronized (lock) {
+                while (!running) {
+                    try {
+                        lock.wait();
+                    } catch (InterruptedException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+            }
             nextTurn();
             MapRenderer.printMap(forestMap);
             turnCount++;
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException ex) {
-                System.out.println("error");
-            }
+            delayBetweenTurns();
+        }
+    }
+
+    private static void delayBetweenTurns() {
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
     public void pauseSimulation() {
-        running = false;
+        synchronized (lock) {
+            running = false;
+        }
     }
 
     public void resumeSimulation() {
-        running = true;
+        synchronized (lock) {
+            running = true;
+            lock.notifyAll();
+        }
     }
 
     public int getTurnCount() {
