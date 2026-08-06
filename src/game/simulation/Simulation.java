@@ -9,8 +9,8 @@ public class Simulation {
     private final SimulationMap simulationMap;
     private final List<Action> initActions;
     private final List<Action> turnActions;
-    private final SimulationContext gameContext;
-    private final Object lock = new Object();
+    private final SimulationContext simulationContext;
+    private final Object pauseLock = new Object();
     private volatile boolean running = true;
     private volatile boolean isPaused = false;
     private int turnCount;
@@ -20,26 +20,23 @@ public class Simulation {
         this.simulationMap = simulationMap;
         this.initActions = initActions;
         this.turnActions = turnActions;
-        this.gameContext = new SimulationContext(simulationMap, pathFinder);
+        this.simulationContext = new SimulationContext(simulationMap, pathFinder);
     }
 
     public void nextTurn() {
-        for (Action turnWorldAction : turnActions) {
-            turnWorldAction.execute(gameContext);
-        }
+        executeActions(turnActions);
         turnCount++;
         System.out.print("Current move: " + turnCount);
+        MapRenderer.printMap(simulationMap);
     }
 
-    public void startSimulation() {
-        for (Action initWorldAction : initActions) {
-            initWorldAction.execute(gameContext);
-        }
+    public void start() {
+        executeActions(initActions);
         while (running) {
-            synchronized (lock) {
+            synchronized (pauseLock) {
                 while (isPaused) {
                     try {
-                        lock.wait();
+                        pauseLock.wait();
                     } catch (InterruptedException ex) {
                         Thread.currentThread().interrupt();
                         return;
@@ -50,8 +47,40 @@ public class Simulation {
                 return;
             }
             nextTurn();
-            MapRenderer.printMap(simulationMap);
             delayBetweenTurns();
+        }
+    }
+
+    public void pause() {
+        synchronized (pauseLock) {
+            isPaused = true;
+        }
+    }
+
+    public void stop() {
+        synchronized (pauseLock) {
+            running = false;
+            isPaused = false;
+            pauseLock.notifyAll();
+        }
+    }
+
+    public void pauseSimulation() {
+        synchronized (pauseLock) {
+            isPaused = true;
+        }
+    }
+
+    public void resume() {
+        synchronized (pauseLock) {
+            isPaused = false;
+            pauseLock.notifyAll();
+        }
+    }
+
+    private void executeActions(List<Action> actions) {
+        for (Action action : actions) {
+            action.execute(simulationContext);
         }
     }
 
@@ -61,30 +90,5 @@ public class Simulation {
         } catch (InterruptedException ex) {
             throw new RuntimeException(ex);
         }
-    }
-
-    public void stopSimulation() {
-        synchronized (lock) {
-            running = false;
-            isPaused = false;
-            lock.notifyAll();
-        }
-    }
-
-    public void pauseSimulation() {
-        synchronized (lock) {
-            isPaused = true;
-        }
-    }
-
-    public void resumeSimulation() {
-        synchronized (lock) {
-            isPaused = false;
-            lock.notifyAll();
-        }
-    }
-
-    public int getTurnCount() {
-        return turnCount;
     }
 }

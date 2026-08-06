@@ -9,17 +9,14 @@ public class MapRenderer {
     private static final String ROCK_IMAGE = "\uD83E\uDEA8";
     private static final String TREE_IMAGE = "\uD83C\uDF33";
     private static final String HERBIVORE_IMAGE = "\uD83D\uDC07";
-    private static final String PREDATOR_IMAGE = "\uD83D\uDD34";
+    private static final String PREDATOR_IMAGE = "\uD83D\uDC2F";
     private static final String GROUND_IMAGE = "\u2B1B";
 
     public static void printMap(SimulationMap simulationMap) {
-
-
         System.out.println();
-        System.out.println("====================");
-        for (int y = 1; y <= simulationMap.getHeight(); y++) {
-            for (int x = 1; x <= simulationMap.getWidth(); x++) {
-                Coordinates coordinates = new Coordinates(x, y);
+        for (int row = 1; row <= simulationMap.getHeight(); row++) {
+            for (int column = 1; column <= simulationMap.getWidth(); column++) {
+                Coordinates coordinates = new Coordinates(column, row);
                 Optional<Entity> entityOpt = simulationMap.getEntity(coordinates);
                 if (entityOpt.isPresent()) {
                     Entity entity = entityOpt.get();

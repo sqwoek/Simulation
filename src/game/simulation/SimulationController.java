@@ -8,16 +8,16 @@ import java.util.Scanner;
 
 public class SimulationController {
     private static final String START_COMMAND = "START";
-    private static final String PAUSE_COMMAND = "PAUSE";
-    private static final String RESUME_COMMAND = "RESUME";
-    private static final String EXIT_COMMAND = "EXIT";
+    private static final String PAUSE_COMMAND = "P";
+    private static final String RESUME_COMMAND = "C";
+    private static final String EXIT_COMMAND = "E";
     private static final String PAUSE_MESSAGE = "Simulation is paused.";
     private static final String RESUME_MESSAGE = "Simulation is running again.";
     private static final String EXIT_MESSAGE = "Termination of Simulation...";
 
     public static void main(String[] args) {
         Simulation simulation = SimulationInitializer.create();
-        Thread simulationThread = new Thread(simulation::startSimulation);
+        Thread simulationThread = new Thread(simulation::start);
         runSimulationControlCycle(simulation, simulationThread);
     }
 
@@ -36,17 +36,17 @@ public class SimulationController {
                 command = getControlDialog(isPaused).input();
                 if (command.equals(PAUSE_COMMAND)) {
                     System.out.println(PAUSE_MESSAGE);
-                    simulation.pauseSimulation();
+                    simulation.pause();
                     isPaused = true;
                 }
                 if (command.equals(RESUME_COMMAND)) {
                     System.out.println(RESUME_MESSAGE);
-                    simulation.resumeSimulation();
+                    simulation.resume();
                     isPaused = false;
                 }
                 if (command.equals(EXIT_COMMAND)) {
                     System.out.println(EXIT_MESSAGE);
-                    simulation.stopSimulation();
+                    simulation.stop();
                     try {
                         simulationThread.join();
                     } catch (InterruptedException ex) {
