@@ -8,14 +8,14 @@ import game.simulation.factory.EntityFactory;
 import game.simulation.entities.fieldObjects.Grass;
 
 public class AddEntityAction implements Action {
-    private static final int GRASS_MINIMUM = 4;
-    private static final int HERBIVORE_MINIMUM = 4;
+    private final int entityMinimum;
     private final Class<? extends Entity> entityClass;
     private final EntityFactory entityFactory;
 
-    public AddEntityAction(Class<? extends Entity> entityClass) {
+    public AddEntityAction(EntityFactory entityFactory, Class<? extends Entity> entityClass, int entityMinimum) {
         this.entityClass = entityClass;
-        this.entityFactory = EntityFactory.getInstance();
+        this.entityFactory = entityFactory;
+        this.entityMinimum = entityMinimum;
     }
 
     @Override
@@ -29,13 +29,6 @@ public class AddEntityAction implements Action {
 
     private boolean needAddEntity(SimulationContext simulationContext, Entity entity) {
         long count = simulationContext.getEntityTypeCount(entity);
-
-        if (entity instanceof Grass) {
-            return count < GRASS_MINIMUM;
-        }
-        if (entity instanceof Herbivore) {
-            return count < HERBIVORE_MINIMUM;
-        }
-        return false;
+        return count < entityMinimum;
     }
 }

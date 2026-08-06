@@ -1,5 +1,7 @@
 package game.simulation.entities.fieldObjects;
 
-public class Tree extends FieldObject {
+import game.simulation.entities.Entity;
+
+public class Tree extends Entity {
 
 }

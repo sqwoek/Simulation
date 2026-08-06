@@ -6,7 +6,7 @@ import game.simulation.dialog.StringSelectDialog;
 import java.util.List;
 import java.util.Scanner;
 
-public class SimulationLauncher {
+public class SimulationController {
     private static final String START_COMMAND = "START";
     private static final String PAUSE_COMMAND = "PAUSE";
     private static final String RESUME_COMMAND = "RESUME";
@@ -16,11 +16,14 @@ public class SimulationLauncher {
     private static final String EXIT_MESSAGE = "Termination of Simulation...";
 
     public static void main(String[] args) {
-        Simulation simulation = new Simulation();
+        Simulation simulation = SimulationInitializer.create();
         Thread simulationThread = new Thread(simulation::startSimulation);
+        runSimulationControlCycle(simulation, simulationThread);
+    }
 
-        String command;
+    private static void runSimulationControlCycle(Simulation simulation, Thread simulationThread) {
         boolean isPaused = false;
+        String command;
 
         while (true) {
             boolean isSimulationOn = isSimulationRunning(simulationThread);

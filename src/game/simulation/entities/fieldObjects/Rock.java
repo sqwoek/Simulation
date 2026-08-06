@@ -1,4 +1,6 @@
 package game.simulation.entities.fieldObjects;
 
-public class Rock extends FieldObject {
+import game.simulation.entities.Entity;
+
+public class Rock extends Entity {
 }

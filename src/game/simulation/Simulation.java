@@ -1,40 +1,38 @@
 package game.simulation;
 
 import game.simulation.actions.Action;
-import game.simulation.factory.InitActionsFactory;
-import game.simulation.factory.TurnActionsFactory;
-import game.simulation.pathFinders.BreadthPathFinder;
 import game.simulation.pathFinders.PathFinder;
 
 import java.util.List;
 
 public class Simulation {
     private final SimulationMap simulationMap;
-    private final List<Action> initWorldActions;
-    private final List<Action> turnWorldActions;
+    private final List<Action> initActions;
+    private final List<Action> turnActions;
     private final SimulationContext gameContext;
     private final Object lock = new Object();
     private volatile boolean running = true;
     private volatile boolean isPaused = false;
     private int turnCount;
 
-    public Simulation() {
-        this.simulationMap = new SimulationMap(10, 10);
+    public Simulation(SimulationMap simulationMap, PathFinder pathFinder, List<Action> initActions, List<Action> turnActions) {
         this.turnCount = 0;
-        PathFinder pathFinder = new BreadthPathFinder();
-        this.initWorldActions = InitActionsFactory.createActions();
+        this.simulationMap = simulationMap;
+        this.initActions = initActions;
+        this.turnActions = turnActions;
         this.gameContext = new SimulationContext(simulationMap, pathFinder);
-        this.turnWorldActions = TurnActionsFactory.createActions();
     }
 
     public void nextTurn() {
-        for (Action turnWorldAction : turnWorldActions) {
+        for (Action turnWorldAction : turnActions) {
             turnWorldAction.execute(gameContext);
         }
+        turnCount++;
+        System.out.print("Current move: " + turnCount);
     }
 
     public void startSimulation() {
-        for (Action initWorldAction : initWorldActions) {
+        for (Action initWorldAction : initActions) {
             initWorldAction.execute(gameContext);
         }
         while (running) {
@@ -53,14 +51,13 @@ public class Simulation {
             }
             nextTurn();
             MapRenderer.printMap(simulationMap);
-            turnCount++;
             delayBetweenTurns();
         }
     }
 
     private static void delayBetweenTurns() {
         try {
-            Thread.sleep(3000);
+            Thread.sleep(1500);
         } catch (InterruptedException ex) {
             throw new RuntimeException(ex);
         }

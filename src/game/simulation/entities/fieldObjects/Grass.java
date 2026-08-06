@@ -1,5 +1,7 @@
 package game.simulation.entities.fieldObjects;
 
-public class Grass extends FieldObject {
+import game.simulation.entities.Entity;
+
+public class Grass extends Entity {
 
 }

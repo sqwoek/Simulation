@@ -13,21 +13,7 @@ public class EntityFactory {
     private final static int PREDATOR_SPEED = 2;
     private final static int PREDATOR_HEALTH = 100;
     private final static int PREDATOR_ATTACK = 35;
-    private static volatile EntityFactory instance;
 
-    private EntityFactory() {
-    }
-
-    public static EntityFactory getInstance() {
-        if (instance == null) {
-            synchronized (EntityFactory.class) {
-                if (instance == null) {
-                    instance = new EntityFactory();
-                }
-            }
-        }
-        return instance;
-    }
 
     public Entity create(Class<? extends Entity> entityClass) {
         if (entityClass == Herbivore.class) {

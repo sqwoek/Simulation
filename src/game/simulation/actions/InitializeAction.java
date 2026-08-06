@@ -2,10 +2,10 @@ package game.simulation.actions;
 
 import game.simulation.Coordinates;
 import game.simulation.SimulationContext;
+import game.simulation.entities.Entity;
 import game.simulation.entities.creatures.Creature;
 import game.simulation.entities.creatures.Herbivore;
 import game.simulation.entities.creatures.Predator;
-import game.simulation.entities.fieldObjects.FieldObject;
 import game.simulation.entities.fieldObjects.Grass;
 import game.simulation.entities.fieldObjects.Rock;
 import game.simulation.entities.fieldObjects.Tree;
@@ -17,15 +17,23 @@ import java.util.Optional;
 import java.util.Random;
 
 public class InitializeAction implements Action {
-    private static final int MAP_SIZE = 10;
-    private static final int HERBIVORE_COUNT = 4;
-    private static final int PREDATOR_COUNT = 2;
-    private static final int SPAWN_RANGE = 10;
+    private static final double OBJECT_COVERAGE = 0.3;
+    private static final int SPAWN_RANGE = 3;
     private static final int ROCK_INDEX = 0;
     private static final int TREE_INDEX = 1;
     private static final int GRASS_INDEX = 2;
+    private final int mapSize;
+    private final int herbivoreMinimum;
+    private final int predatorMinimum;
     private final Random random = new Random();
-    private final EntityFactory entityFactory = EntityFactory.getInstance();
+    private final EntityFactory entityFactory;
+
+    public InitializeAction(EntityFactory entityFactory, int mapSize, int herbivoreMinimum, int predatorMinimum) {
+        this.mapSize = mapSize;
+        this.herbivoreMinimum = herbivoreMinimum;
+        this.predatorMinimum = predatorMinimum;
+        this.entityFactory = entityFactory;
+    }
 
     @Override
     public void execute(SimulationContext simulationContext) {
@@ -36,10 +44,10 @@ public class InitializeAction implements Action {
 
     private List<Creature> getListOfCreatures() {
         List<Creature> creatures = new ArrayList<>();
-        for (int i = 0; i < HERBIVORE_COUNT; i++) {
+        for (int i = 0; i < herbivoreMinimum; i++) {
             creatures.add((Creature) entityFactory.create(Herbivore.class));
         }
-        for (int i = 0; i < PREDATOR_COUNT; i++) {
+        for (int i = 0; i < predatorMinimum; i++) {
             creatures.add((Creature) entityFactory.create(Predator.class));
         }
         return creatures;
@@ -53,23 +61,20 @@ public class InitializeAction implements Action {
     }
 
     private void placeFieldObjects(SimulationContext simulationContext) {
-        int fieldObjectsCount = (MAP_SIZE * MAP_SIZE);
-        for (int i = 1; i <= fieldObjectsCount; i++) {
+        for (int i = 1; i <= mapSize * OBJECT_COVERAGE; i++) {
             Coordinates coordinates = simulationContext.getEmptyCell();
-            Optional<FieldObject> objectOpt = getFieldObject();
-            if (objectOpt.isPresent()) {
-                simulationContext.addEntity(objectOpt.get(), coordinates);
-            }
+            Entity object = getFieldObject();
+            simulationContext.addEntity(object, coordinates);
         }
     }
 
-    private Optional<FieldObject> getFieldObject() {
-        int chanceRoll = random.nextInt(SPAWN_RANGE);
-        return Optional.ofNullable((FieldObject) switch (chanceRoll) {
+    private Entity getFieldObject() {
+        int randomIndex = random.nextInt(SPAWN_RANGE);
+        return switch (randomIndex) {
             case ROCK_INDEX -> entityFactory.create(Rock.class);
             case TREE_INDEX -> entityFactory.create(Tree.class);
             case GRASS_INDEX -> entityFactory.create(Grass.class);
-            default -> null;
-        });
+            default -> throw new IllegalStateException("Unexpected value: " + randomIndex);
+        };
     }
 }
